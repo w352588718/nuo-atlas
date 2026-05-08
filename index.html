@@ -3614,6 +3614,7 @@
       height: 100%;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body class="is-loading">
   <div class="loader" id="loader" aria-hidden="true">
@@ -5569,8 +5570,10 @@
       var lastPointerTime = 0;
       var lastSpeed = 0;          // for ink brush speed detection
 
-      /* ---- LocalStorage Keys ---- */
-      var STORAGE_KEY_WORKS = 'nuo_galaxy_user_works';
+      /* ---- Supabase Cloud Storage ---- */
+      var SUPABASE_URL = 'https://lyvxelglfhpfywuvsvxa.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_hCjhQkrmpqAVqyebMRL3bw_I6BH7V-A';
+      var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       var STORAGE_KEY_STATE = 'nuo_galaxy_state';
 
       /* ---- 3D Model State ---- */
@@ -5593,27 +5596,40 @@
 
       if (!drawCanvas || !drawCtx) return;
 
-      /* ---- LocalStorage Persistence ---- */
-      function saveWorksToStorage() {
-        var userWorks = [];
-        for (var i = 5; i < works.length; i++) {
-          var w = works[i];
-          userWorks.push({ title: w.title, text: w.text, tags: w.tags, tone: w.tone, heat: w.heat, dataUrl: w.dataUrl });
-        }
-        try { localStorage.setItem(STORAGE_KEY_WORKS, JSON.stringify(userWorks)); } catch (e) {}
+      /* ---- Cloud Persistence (Supabase) ---- */
+      function saveWorkToCloud(workData) {
+        try {
+          supabaseClient.from('drawings').insert({
+            title: workData.title,
+            text: workData.text,
+            tags: workData.tags || [],
+            tone: workData.tone,
+            heat: workData.heat,
+            data_url: workData.dataUrl
+          }).then(function() {}).catch(function() {});
+        } catch(e) {}
       }
 
-      function loadWorksFromStorage() {
+      function loadWorksFromCloud() {
         try {
-          var raw = localStorage.getItem(STORAGE_KEY_WORKS);
-          if (!raw) return;
-          var userWorks = JSON.parse(raw);
-          for (var i = 0; i < userWorks.length; i++) {
-            var w = userWorks[i];
-            var idx = works.push({ title: w.title, text: w.text, tags: w.tags, filter: 'all', tone: w.tone, heat: w.heat, dataUrl: w.dataUrl }) - 1;
-            window.__addStarToGalaxy(idx, w.tone);
-          }
-        } catch (e) {}
+          supabaseClient.from('drawings').select('*').order('id', { ascending: true }).then(function(res) {
+            if (res.error) return;
+            if (!res.data || res.data.length === 0) return;
+            for (var i = 0; i < res.data.length; i++) {
+              var w = res.data[i];
+              var idx = works.push({
+                title: w.title,
+                text: w.text,
+                tags: w.tags || [],
+                filter: 'all',
+                tone: w.tone,
+                heat: w.heat,
+                dataUrl: w.data_url
+              }) - 1;
+              window.__addStarToGalaxy(idx, w.tone);
+            }
+          }).catch(function() {});
+        } catch(e) {}
       }
 
       function saveStateToStorage() {
@@ -6361,7 +6377,14 @@
             dataUrl: dataUrl
           }) - 1;
           window.__addStarToGalaxy(workIndex, tone);
-          saveWorksToStorage();
+          saveWorkToCloud({
+            title: userName,
+            text: userDesc,
+            tags: ['DIY'],
+            tone: tone,
+            heat: .95,
+            dataUrl: dataUrl
+          });
           spawnSaveParticles();
           // Update work card with saved content
           if (workCard) {
@@ -6597,7 +6620,7 @@
         fitDrawingCanvas();
         mirrorAxis = drawCanvas.width / 2;
         loadStateFromStorage();
-        loadWorksFromStorage();
+        loadWorksFromCloud();
         setMode('browse');
       }
 
