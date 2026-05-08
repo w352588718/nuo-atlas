@@ -1,0 +1,14 @@
+# System
+Thumbs.db
+Desktop.ini
+*.tmp
+
+# Dev server logs
+*.log
+
+# Node (if any later)
+node_modules/
+
+# IDE
+.vscode/
+.idea/
