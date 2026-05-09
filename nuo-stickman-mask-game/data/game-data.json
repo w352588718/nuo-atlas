@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "title": "傩面具 3D 地图收集小游戏",
+    "generatedAt": "2026-05-07T15:54:28.413Z",
+    "interactionModel": "3D starmap exploration collection",
+    "chinaSelectionRule": "basicInfo.region 去括号后按 · 前半段归并；按 outline/pattern/style 置信度平均值、复杂度、id 排序。",
+    "worldSelectionRule": "国际面具首版使用每组 svg_transparent/1.svg 矢量线稿。"
+  },
+  "chinaMasks": [
+    {
+      "id": "china-mask_043",
+      "group": "china",
+      "label": "安徽傩面具代表",
+      "regionOrCountry": "安徽",
+      "image": "assets/masks/china-svg/mask_043.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_043",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_469",
+      "group": "china",
+      "label": "重庆傩面具代表",
+      "regionOrCountry": "重庆",
+      "image": "assets/masks/china-svg/mask_469.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_469",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_363",
+      "group": "china",
+      "label": "福建傩面具代表",
+      "regionOrCountry": "福建",
+      "image": "assets/masks/china-svg/mask_363.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_363",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_049",
+      "group": "china",
+      "label": "广西傩面具代表",
+      "regionOrCountry": "广西",
+      "image": "assets/masks/china-svg/mask_049.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_049",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_402",
+      "group": "china",
+      "label": "贵州傩面具代表",
+      "regionOrCountry": "贵州",
+      "image": "assets/masks/china-svg/mask_402.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_402",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_308",
+      "group": "china",
+      "label": "湖北傩面具代表",
+      "regionOrCountry": "湖北",
+      "image": "assets/masks/china-svg/mask_308.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_308",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_330",
+      "group": "china",
+      "label": "湖南傩面具代表",
+      "regionOrCountry": "湖南",
+      "image": "assets/masks/china-svg/mask_330.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_330",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_147",
+      "group": "china",
+      "label": "江西傩面具代表",
+      "regionOrCountry": "江西",
+      "image": "assets/masks/china-svg/mask_147.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_147",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_017",
+      "group": "china",
+      "label": "四川傩面具代表",
+      "regionOrCountry": "四川",
+      "image": "assets/masks/china-svg/mask_017.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_017",
+      "selectionScore": 0.67
+    },
+    {
+      "id": "china-mask_005",
+      "group": "china",
+      "label": "云南傩面具代表",
+      "regionOrCountry": "云南",
+      "image": "assets/masks/china-svg/mask_005.svg",
+      "sourceType": "china-province-representative-vector-svg",
+      "unlocked": false,
+      "sourceId": "mask_005",
+      "selectionScore": 0.67
+    }
+  ],
+  "worldMasks": [
+    {
+      "id": "world-japan-noh",
+      "group": "world",
+      "label": "日本能面代表",
+      "regionOrCountry": "日本",
+      "image": "assets/masks/world-svg/japan-noh.svg",
+      "sourceType": "international-vectorized-svg",
+      "unlocked": false,
+      "sourceId": "svg_transparent/1.svg"
+    },
+    {
+      "id": "world-korea-talchum",
+      "group": "world",
+      "label": "韩国 Talchum 面具代表",
+      "regionOrCountry": "韩国",
+      "image": "assets/masks/world-svg/korea-talchum.svg",
+      "sourceType": "international-vectorized-svg",
+      "unlocked": false,
+      "sourceId": "svg_transparent/1.svg"
+    },
+    {
+      "id": "world-indonesia-bali",
+      "group": "world",
+      "label": "印度尼西亚巴厘岛面具代表",
+      "regionOrCountry": "印度尼西亚（巴厘岛）",
+      "image": "assets/masks/world-svg/indonesia-bali.svg",
+      "sourceType": "international-vectorized-svg",
+      "unlocked": false,
+      "sourceId": "svg_transparent/1.svg"
+    },
+    {
+      "id": "world-sri-lanka-sanni",
+      "group": "world",
+      "label": "斯里兰卡 Sanni 面具代表",
+      "regionOrCountry": "斯里兰卡",
+      "image": "assets/masks/world-svg/sri-lanka-sanni.svg",
+      "sourceType": "international-vectorized-svg",
+      "unlocked": false,
+      "sourceId": "svg_transparent/1.svg"
+    }
+  ]
+}

@@ -3615,6 +3615,7 @@
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="nuo-stickman-mask-game/style.css">
 </head>
 <body class="is-loading">
   <div class="loader" id="loader" aria-hidden="true">
@@ -3643,6 +3644,7 @@
       <a href="#atlas">Atlas</a>
       <a href="#visual-insight">Profile</a>
       <a href="#color-atlas">Color</a>
+      <a href="#stickman-game">Game</a>
       <a href="#galaxy">Galaxy</a>
     </div>
     <a class="nav-cta" href="#final">Enter atlas</a>
@@ -4000,12 +4002,25 @@
       </div>
     </section>
 
+    <!-- 傩面具 3D 地图收集小游戏 -->
+    <section class="section" id="stickman-game" data-watch="stickman-game">
+      <div class="section-inner">
+        <div class="section-meta">
+          <div>
+            <p class="kicker">06 / Mask Collector Game</p>
+            <h2 class="section-title"><span class="gradient-text">傩面具收集小游戏</span></h2>
+            <p class="section-desc">在 3D 地图中探索中国各地傩文化，收集独特的傩面具。</p>
+          </div>
+        </div>
+        <div id="nuo-stickman-game" style="position:relative;min-height:660px;border-radius:28px;overflow:hidden;margin-bottom:0;"></div>
+      </div>
+    </section>
 
     <section class="section" id="galaxy" data-watch="galaxy">
       <div class="section-inner">
         <div class="section-meta">
           <div>
-            <p class="kicker">06 / Works galaxy</p>
+            <p class="kicker">07 / Works galaxy</p>
             <h2 class="section-title"><span class="gradient-text">作品星河 / Works Galaxy</span></h2>
           </div>
           <p class="section-desc">在宇宙中发现每一件傩面佳作。星点亮度、大小与颜色表现热度和类别，筛选按钮会实时重排作品星群。</p>
@@ -4108,8 +4123,13 @@
             <strong>色彩图谱</strong>
             <p>解析标准色、地域色系与单图色条</p>
           </a>
-          <a class="final-node" href="#galaxy" style="--node-tone:#fff0d2;">
+          <a class="final-node" href="#stickman-game" style="--node-tone:#90dfe1;">
             <span>06</span>
+            <strong>收集小游戏</strong>
+            <p>在 3D 地图中探索收集傩面具</p>
+          </a>
+          <a class="final-node" href="#galaxy" style="--node-tone:#fff0d2;">
+            <span>07</span>
             <strong>作品星河</strong>
             <p>以星群方式浏览代表作品</p>
           </a>
@@ -4130,6 +4150,7 @@
 
   <script src="data/masks.js"></script>
   <script src="starmap_archive_app.js"></script>
+  <script src="nuo-stickman-mask-game/game.js"></script>
   <script>
     const root = document.documentElement;
     let targetX = 0, targetY = 0, smoothX = 0, smoothY = 0;
@@ -6630,6 +6651,16 @@
         // Wait a tick for galaxy canvas to initialize first
         setTimeout(init, 200);
       }
+    })();
+  </script>
+  <script>
+    (function() {
+      if (!window.NuoStickmanGame) return;
+      window.nuoStickmanGame = window.NuoStickmanGame.mount('#nuo-stickman-game', {
+        assetBase: 'nuo-stickman-mask-game/',
+        height: 660,
+        sound: false
+      });
     })();
   </script>
 </body>

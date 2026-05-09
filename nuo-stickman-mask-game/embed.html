@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>傩面具地图收集小游戏嵌入示例</title>
+  <link rel="stylesheet" href="style.css" data-nuo-game-style>
+  <style>
+    body {
+      margin: 0;
+      color: #fff0d2;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(255, 96, 52, 0.34), transparent 31vw),
+        radial-gradient(circle at 78% 26%, rgba(255, 228, 163, 0.15), transparent 28vw),
+        linear-gradient(180deg, #1a0c08 0%, #080403 34%, #050302 100%);
+      font-family: "Noto Serif SC", "Songti SC", STSong, SimSun, serif;
+    }
+
+    .embed-demo {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .embed-demo h1 {
+      margin: 0 0 16px;
+      color: #ff6034;
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 1.04;
+      text-shadow: 0 0 24px rgba(255, 96, 52, 0.34);
+    }
+
+    .embed-code {
+      overflow-x: auto;
+      margin: 18px 0 0;
+      border: 1px solid rgba(255, 240, 210, 0.18);
+      border-radius: 8px;
+      background: rgba(7, 4, 3, 0.62);
+      padding: 14px;
+      color: rgba(255, 240, 210, 0.78);
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="embed-demo">
+    <h1>傩面具 3D 地图收集小游戏</h1>
+    <div id="embedded-game"></div>
+    <pre class="embed-code"><code>&lt;div id="nuo-game"&gt;&lt;/div&gt;
+&lt;script src="/nuo-stickman-mask-game/game.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  NuoStickmanGame.mount("#nuo-game", {
+    assetBase: "/nuo-stickman-mask-game/",
+    height: 640,
+    sound: false
+  });
+&lt;/script&gt;</code></pre>
+  </main>
+
+  <script src="game.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      window.embeddedNuoGame = window.NuoStickmanGame.mount("#embedded-game", {
+        assetBase: "./",
+        height: 640,
+        sound: false
+      });
+    });
+  </script>
+</body>
+</html>

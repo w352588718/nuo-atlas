@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>傩面具 3D 地图收集小游戏</title>
+  <link rel="stylesheet" href="style.css" data-nuo-game-style>
+</head>
+<body class="nuo-game-standalone">
+  <main class="nuo-standalone-page">
+    <section id="nuo-stickman-game" class="nuo-standalone-mount" aria-label="傩面具 3D 火柴人小游戏"></section>
+  </main>
+
+  <script src="game.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      window.nuoGame = window.NuoStickmanGame.mount("#nuo-stickman-game", {
+        assetBase: "./",
+        height: Math.min(760, Math.max(560, window.innerHeight - 24)),
+        sound: false
+      });
+    });
+  </script>
+</body>
+</html>
