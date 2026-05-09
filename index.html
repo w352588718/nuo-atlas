@@ -3616,6 +3616,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <link rel="stylesheet" href="nuo-stickman-mask-game/style.css">
+  <link rel="stylesheet" href="global-compare-styles.css">
 </head>
 <body class="is-loading">
   <div class="loader" id="loader" aria-hidden="true">
@@ -4003,18 +4004,72 @@
       </div>
     </section>
 
-    <!-- 全球面具 · 跨文化对比 -->
+    <!-- 国外面具跨文化分析 -->
     <section class="section" id="global-compare" data-watch="global-compare">
       <div class="section-inner">
         <div class="section-meta">
           <div>
             <p class="kicker">05-B / Global Mask Comparison</p>
-            <h2 class="section-title"><span class="gradient-text">国外面具跨文化分析</span></h2>
-            <p class="section-desc">韩国、日本、巴厘岛、斯里兰卡四文化圈80张面具，与中国傩面具同框架下的系统对比。</p>
+            <h2 class="section-title"><span class="gradient-text">世界面具样本</span></h2>
+            <p class="section-desc">这一章暂时离开中国傩面具，把视线转向韩国假面戏、日本能面、巴厘岛面具舞与斯里兰卡Sanni/Kolam。四个文化圈共80张面具，分别呈现讽刺、幽玄、神魔对抗与驱病治愈等不同仪式语境。</p>
+            <div class="feature-grid">
+              <div class="feature"><small>01</small><strong>韩国假面戏：世俗讽刺</strong><span>Talchum与河回传统把面具推向社会关系现场，两班贵族、老妇、喜剧人物构成强烈的世俗角色谱系。</span></div>
+              <div class="feature"><small>02</small><strong>日本能面：幽玄转身</strong><span>从小面、中将到般若、大飞出，能面以极细微的表情差异承载身份转换、亡灵显影与仪式化审美。</span></div>
+              <div class="feature"><small>03</small><strong>巴厘面具舞：神魔对峙</strong><span>Barong与Topeng在守护神、恶魔和史诗英雄之间往返，使面具成为善恶力量持续交锋的可视化媒介。</span></div>
+              <div class="feature"><small>04</small><strong>斯里兰卡病魔面：驱病治愈</strong><span>Sanni与Kolam传统把疾病、病魔和戏剧表演叠合在一起，面具既是诊断符号，也是治疗仪式工具。</span></div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="overview-2col">
+              <div class="overview-left">
+                <small class="ov-eyebrow">角色生态 · 语义侧重</small>
+                <h3 class="ov-subtitle">这一章只介绍国外样本：它们各自为什么需要面具。</h3>
+                <p class="ov-intro">韩国假面戏让面具揭开社会身份，日本能面让面具保存幽玄情绪，巴厘岛面具舞让神魔关系持续显形，斯里兰卡Sanni则把病痛转译为可以被驱逐的形象。这里先建立国外面具的文化坐标，再进入下一章与中国傩面具对照。</p>
+                <div class="ov-role-compact" id="overviewRoleCompact"></div>
+              </div>
+              <div class="overview-right" id="overviewRight"></div>
+            </div>
           </div>
         </div>
-        <div style="position:relative;width:100%;height:5300px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,240,210,.14);">
-          <iframe src="global-mask-compare-embed.html" style="width:100%;height:100%;border:none;" loading="lazy" title="国外面具跨文化分析"></iframe>
+      </div>
+    </section>
+
+    <section class="section" id="compare-section" data-watch="compare">
+      <div class="section-inner">
+        <div class="section-meta">
+          <div>
+            <p class="kicker">05-C / China-Foreign Comparison</p>
+            <h2 class="section-title"><span class="gradient-text">中外面具对比</span></h2>
+            <p class="section-desc">这一章以国内483件傩面具为基线，把上一章中的国外样本放入同一套分析框架。比较的重点不再是单独介绍文化圈，而是看国外面具如何在角色、形态和仪式功能上与中国傩面具发生对应、偏移或断裂。</p>
+            <div class="deck-shell">
+              <aside class="deck-control">
+                <small>China-foreign comparison deck</small>
+                <h3 id="deckHeadline">角色对照</h3>
+                <p id="deckIntro">以中国傩面的角色分类为基线，观察国外面具分别靠近神祇、精怪、英雄还是世俗人物。</p>
+                <div class="deck-tabs">
+                  <button class="deck-tab is-active" data-slide="0"><span class="dt-num">01</span><span class="dt-label">角色对照</span><span class="dt-hint">国外角色 ← 中国谱系</span></button>
+                  <button class="deck-tab" data-slide="1"><span class="dt-num">02</span><span class="dt-label">形态对照</span><span class="dt-hint">面部结构 ← 傩面基线</span></button>
+                  <button class="deck-tab" data-slide="2"><span class="dt-num">03</span><span class="dt-label">功能对照</span><span class="dt-hint">仪式功能 ← 威慑强度</span></button>
+                </div>
+                <div class="deck-stats">
+                  <span><strong>80</strong> 国外样本</span><span><strong>4</strong> 文化圈</span><span><strong>6</strong> 角色类型</span>
+                </div>
+                <div class="deck-arrows">
+                  <button class="deck-arrow" id="deckPrev">←</button>
+                  <button class="deck-arrow" id="deckNext">→</button>
+                </div>
+              </aside>
+              <div class="deck-stage">
+                <div class="deck-track" id="deckTrack">
+                  <div class="deck-card"><div class="eco-bars-wrap" id="ecoBarsWrap"></div><div class="eco-insight-row"><div class="eco-findings-3col" id="ecoFindings3"></div></div><div class="ritual-compare" id="ritualCompare"></div></div>
+                  <div class="deck-card"><div class="align-summary-grid" id="alignSummaryGrid"></div><div class="align-radar-header"><small>Visual Gene Offset</small><h3>面部视觉基因偏移（以中国傩面为基线）</h3></div><div class="align-deviation-bars" id="alignDeviationBars"></div></div>
+                  <div class="deck-card"><div class="deepdive-layout"><div class="deepdive-scatter-col"><small>Ritual Function Matrix</small><h3>形态相似 × 仪式等价</h3><svg class="quad-scatter" id="quadScatter" viewBox="0 0 620 480"></svg><div class="quad-legend" id="quadLegend"></div></div><div class="deepdive-extremity-col"><small>Ritual Force Index</small><h3>怪诞感与威慑力</h3><div class="ext-bars" id="extGrotesque"></div><div class="ext-bars" id="extDeterrence"></div><div class="ext-insight" id="extInsight"></div></div></div></div>
+                </div>
+                <div class="deck-dots">
+                  <button class="deck-dot is-active" data-slide="0"></button><button class="deck-dot" data-slide="1"></button><button class="deck-dot" data-slide="2"></button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -4172,6 +4227,7 @@
 
   <script src="data/masks.js"></script>
   <script src="starmap_archive_app.js"></script>
+  <script src="global-compare-render.js"></script>
   <script src="nuo-stickman-mask-game/game.js"></script>
   <script>
     const root = document.documentElement;
