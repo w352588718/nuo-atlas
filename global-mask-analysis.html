@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>全球面具分析｜Cross-Culture Mask Atlas</title>
+<style>
+:root {
+  --bg: #070403;
+  --panel: rgba(255,239,207,.075);
+  --panel-2: rgba(0,0,0,.28);
+  --ink: #fff0d2;
+  --muted: rgba(255,240,210,.62);
+  --faint: rgba(255,240,210,.36);
+  --red: #bd251f;
+  --red-hot: #ff6034;
+  --gold: #d6a159;
+  --gold-hot: #ffe4a3;
+  --cyan: #90dfe1;
+  --green: #adca7a;
+  --line: rgba(255,240,210,.14);
+  --line-strong: rgba(255,240,210,.28);
+  --sx: 0; --sy: 0; --scroll: 0;
+  --overview: 0; --compare: 0;
+  --serif: "Noto Serif SC","Songti SC",STSong,SimSun,serif;
+  --sans: Inter,ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono: "SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; background:var(--bg); color:var(--ink); }
+body {
+  margin:0; min-height:100vh; overflow-x:hidden; font-family:var(--sans);
+  text-rendering:geometricPrecision;
+  background:
+    radial-gradient(circle at calc(50% + var(--sx)*18vw) calc(7% + var(--sy)*10vh),rgba(255,96,52,.34),transparent 31vw),
+    radial-gradient(circle at calc(78% - var(--sx)*10vw) 26%,rgba(255,228,163,.15),transparent 28vw),
+    radial-gradient(circle at 18% 72%,rgba(144,223,225,.09),transparent 34vw),
+    linear-gradient(180deg,#1a0c08 0%,#080403 34%,#050302 100%);
+}
+body::before,body::after { content:""; position:fixed; inset:0; pointer-events:none; z-index:80; }
+body::before {
+  opacity:.13;
+  background-image:
+    linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at 50% 42%,black,transparent 78%);
+}
+body::after { opacity:.08; mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.62'/%3E%3C/svg%3E"); }
+.progress { position:fixed; left:0; top:0; z-index:140; width:calc(var(--scroll)*100%); height:3px;
+  background:linear-gradient(90deg,var(--red-hot),var(--gold-hot),var(--cyan));
+  box-shadow:0 0 20px rgba(255,96,52,.76); }
+.cursor-light { position:fixed; z-index:70; left:0; top:0; width:220px; height:220px; border-radius:50%;
+  pointer-events:none; transform:translate(calc(50vw + var(--sx)*50vw - 50%),calc(50vh + var(--sy)*50vh - 50%));
+  background:radial-gradient(circle,rgba(255,96,52,.14),rgba(255,228,163,.055) 40%,transparent 70%);
+  filter:blur(3px); mix-blend-mode:screen; opacity:.62; will-change:transform; }
+.nav { position:fixed; top:22px; left:50%; transform:translateX(-50%);
+  width:min(1180px,calc(100vw - 34px)); height:62px; z-index:130;
+  display:flex; align-items:center; justify-content:space-between; gap:14px; padding:0 16px;
+  border:1px solid var(--line); border-radius:999px; background:rgba(7,4,3,.58);
+  backdrop-filter:blur(18px); box-shadow:0 20px 60px rgba(0,0,0,.38); }
+.brand { display:inline-flex; align-items:center; gap:10px; font-weight:950; letter-spacing:-.06em; }
+.brand-mark { width:34px; height:34px; border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,var(--red-hot) 0 17%,transparent 18%),
+    radial-gradient(circle at 33% 43%,#070403 0 8%,transparent 9%),
+    radial-gradient(circle at 67% 43%,#070403 0 8%,transparent 9%),
+    conic-gradient(from 210deg,var(--gold-hot),var(--red-hot),#602018,var(--gold-hot));
+  box-shadow:0 0 26px rgba(255,96,52,.44),inset 0 0 0 1px rgba(255,255,255,.2); }
+.nav-links { display:flex; gap:6px; padding:5px; border:1px solid rgba(255,240,210,.09);
+  border-radius:999px; background:rgba(255,255,255,.028); }
+.nav-links a { border-radius:999px; padding:9px 13px; color:rgba(255,240,210,.7);
+  font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+  transition:.25s ease; }
+.nav-links a:hover { background:rgba(255,240,210,.09); color:var(--ink); transform:translateY(-1px); }
+.hero-stage { position:relative; height:130vh; min-height:900px; }
+.hero { position:sticky; top:0; height:100vh; min-height:660px; overflow:hidden; isolation:isolate; perspective:1450px; }
+.hero::after { content:""; position:absolute; inset:auto 0 0; z-index:8; height:52vh; pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,4,3,0) 0%,rgba(7,4,3,.08) 26%,rgba(7,4,3,.34) 58%,rgba(7,4,3,.82) 100%); }
+.hero-bg-word { position:absolute; z-index:2; inset:12vh -4vw auto; text-align:center;
+  font-family:var(--serif); font-size:clamp(120px,18vw,290px); line-height:.8; letter-spacing:-.12em;
+  font-weight:950; opacity:calc(.58 - var(--scroll)*.44);
+  background:linear-gradient(180deg,rgba(255,240,210,.34),rgba(255,240,210,.06) 60%,rgba(255,96,52,.18));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; transform:translateY(calc(var(--scroll)*-30px)); }
+.hero-orbit { position:absolute; z-index:3; left:50%; top:55%; transform:translate(-50%,-54%);
+  width:min(54vw,680px); aspect-ratio:1.28; border-radius:50%; opacity:.58;
+  border:1px solid rgba(255,240,210,.09);
+  background:radial-gradient(circle at 50% 48%,rgba(255,96,52,.12),transparent 34%),
+    repeating-radial-gradient(circle,transparent 0 24px,rgba(255,240,210,.04) 25px 26px);
+  animation:orbit-rotate 38s linear infinite; }
+@keyframes orbit-rotate { to { transform:translate(-50%,-54%) rotate(360deg); } }
+.hero-title-wrap { position:absolute; z-index:5; left:50%; top:48%; width:min(1120px,calc(100vw - 60px));
+  transform:translate3d(-50%,-50%,120px); }
+.hero-kicker { margin-bottom:12px; font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+  color:var(--gold-hot); text-transform:uppercase; }
+.hero-title { margin:0; font-family:var(--serif); font-size:clamp(52px,8vw,120px); line-height:.9;
+  letter-spacing:-.07em; font-weight:950;
+  background:linear-gradient(180deg,var(--ink) 0%,var(--gold) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero-sub { margin-top:20px; max-width:620px; color:var(--muted); font-size:clamp(14px,1.15vw,18px); line-height:1.74; }
+.hero-stats-row { display:flex; gap:24px; margin-top:32px; flex-wrap:wrap; }
+.hero-stat { padding:10px 18px; border:1px solid var(--line); border-radius:999px;
+  background:rgba(255,240,210,.04); backdrop-filter:blur(10px); }
+.hero-stat strong { font-family:var(--serif); font-size:22px; letter-spacing:-.03em; display:block; }
+.hero-stat span { font-size:10px; color:var(--muted); font-family:var(--mono); letter-spacing:.1em; text-transform:uppercase; }
+.floating-tag { position:fixed; z-index:10; padding:9px 14px; border:1px solid var(--line); border-radius:999px;
+  background:rgba(7,4,3,.58); backdrop-filter:blur(12px);
+  font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+.tag-left { left:max(30px,5vw); bottom:14vh; }
+.tag-right { right:max(30px,5vw); top:20vh; }
+.scroll-cue { position:fixed; z-index:10; bottom:22px; left:50%; transform:translateX(-50%);
+  padding:9px 16px; border:1px solid var(--line); border-radius:999px;
+  background:rgba(7,4,3,.5); backdrop-filter:blur(10px);
+  font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+
+.section { min-height:auto; padding:clamp(60px,8vh,100px) max(20px,6vw); position:relative; overflow:hidden; }
+.section + .section { padding-top:clamp(40px,5vh,70px); }
+.section-inner { width:min(1180px,100%); margin:0 auto; position:relative; z-index:3; }
+.kicker { margin-bottom:8px; font-family:var(--mono); font-size:10px; letter-spacing:.18em;
+  color:var(--gold-hot); text-transform:uppercase; }
+.section-title { margin:0; max-width:900px; font-size:clamp(38px,5.5vw,88px); line-height:.9;
+  letter-spacing:-.06em; font-weight:950; }
+.section-desc { margin-top:20px; max-width:720px; color:var(--muted); font-size:clamp(14px,1.1vw,17px); line-height:1.74; }
+.gradient-text { background:linear-gradient(135deg,var(--ink) 0%,var(--gold-hot) 55%,var(--cyan) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+.feature-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-top:48px; }
+.feature { min-height:200px; border:1px solid rgba(255,240,210,.12); border-radius:27px; padding:22px;
+  background:radial-gradient(circle at 12% 0%,rgba(255,96,52,.11),transparent 42%),rgba(255,240,210,.05);
+  transform:translateY(calc((1 - var(--overview))*36px)); opacity:calc(.34 + var(--overview)*.66); }
+.feature small { display:inline-flex; margin-bottom:38px; color:var(--gold-hot);
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em; }
+.feature strong { display:block; margin-bottom:12px; font-size:20px; letter-spacing:-.04em; }
+.feature span { color:var(--muted); line-height:1.65; font-size:14px; }
+
+.role-bar { display:flex; align-items:center; gap:16px; padding:14px 18px; border:1px solid var(--line);
+  border-radius:16px; background:rgba(255,240,210,.03);
+  transform:translateY(calc((1 - var(--overview))*28px)); opacity:calc(.4 + var(--overview)*.6); }
+.role-bar .role-name { width:100px; font-size:14px; letter-spacing:-.03em; font-weight:600; }
+.role-bar .role-track { flex:1; height:26px; border-radius:999px; background:rgba(255,240,210,.06);
+  display:flex; overflow:hidden; gap:2px; }
+.role-bar .role-seg { height:100%; transition:width .4s ease; }
+.role-bar .role-count { width:50px; text-align:right; font-family:var(--mono); font-size:13px; color:var(--muted); }
+
+
+.quadrant-card h3 { margin:0 0 6px; font-size:20px; letter-spacing:-.03em; }
+
+
+.metric-card .m-dom small,.m-for small { display:block; font-size:8px; letter-spacing:.08em; color:var(--faint); }
+
+
+.cp-mask img { height:100px; object-fit:contain; filter:contrast(1.08) saturate(1.05); }
+.cp-mask strong { font-size:15px; letter-spacing:-.03em; }
+.cp-mask small { font-size:10px; color:var(--faint); font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+
+.cp-line b { padding:6px 14px; border:1px solid var(--line); border-radius:999px;
+  background:#1a1008; color:var(--gold); font-size:11px; white-space:nowrap; letter-spacing:.04em; }
+
+
+.cp-world strong { font-size:15px; letter-spacing:-.03em; }
+.cp-world small { font-size:10px; color:var(--faint); font-family:var(--mono); letter-spacing:.08em; }
+
+
+.final { min-height:100vh; display:grid; place-items:center; text-align:center; }
+.final-card { width:min(960px,100%); padding:clamp(32px,6vw,80px); border:1px solid rgba(255,240,210,.13);
+  border-radius:40px;
+  background:radial-gradient(circle at 18% 8%,rgba(255,96,52,.15),transparent 32%),
+    radial-gradient(circle at 84% 82%,rgba(144,223,225,.1),transparent 36%),rgba(255,240,210,.058);
+  box-shadow:0 48px 132px rgba(0,0,0,.48); backdrop-filter:blur(16px); }
+.final-card h2 { margin:0; font-size:clamp(42px,7vw,100px); line-height:.9; letter-spacing:-.08em; }
+.final-card p { margin:26px auto 0; max-width:700px; color:var(--muted); line-height:1.78;
+  font-size:clamp(14px,1.15vw,18px); }
+
+@media (max-width:900px) {
+  .feature-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .culture-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .semantic-grid { grid-template-columns:1fr; }
+  .quadrant-grid { grid-template-columns:1fr; }
+  .metrics-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .compare-pair { grid-template-columns:1fr 1fr; gap:12px; }
+  .cp-line { display:none; }
+  .hero-bg-word { font-size:clamp(72px,14vw,160px); }
+
+  .deepdive-layout { grid-template-columns:1fr; }
+
+}
+
+/* ── Overview 2-col (merged 01+02) ───────────────────────────────── */
+.section-divider { width:100%; height:1px; margin:36px 0 8px;
+  background:linear-gradient(90deg,transparent,var(--line),transparent); }
+.overview-2col { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,420px); gap:32px; }
+.ov-eyebrow { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.1em;
+  color:var(--gold-hot); text-transform:uppercase; margin-bottom:6px; }
+.ov-subtitle { font-size:18px; font-weight:700; letter-spacing:-.03em; margin:0 0 8px; }
+.ov-intro { color:var(--muted); font-size:13px; line-height:1.65; margin:0 0 16px; }
+.overview-right { display:grid; gap:10px; }
+.ov-sem-card { padding:16px; border:1px solid var(--line); border-radius:18px; background:rgba(255,240,210,.03); }
+.ov-sem-card h4 { margin:0 0 4px; font-size:14px; letter-spacing:-.02em; }
+.ov-sem-card .ov-sem-top { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin:8px 0; }
+.ov-sem-card .ov-sem-item { padding:6px 8px; border-radius:10px; background:rgba(0,0,0,.18); text-align:center; }
+.ov-sem-card .ov-sem-item .ovs-val { display:block; font-size:18px; font-weight:700; }
+.ov-sem-card .ov-sem-item .ovs-label { display:block; font-size:8px; color:var(--faint); font-family:var(--mono); letter-spacing:.05em; margin-top:2px; }
+.ov-sem-card .ov-ritual { font-size:10px; color:var(--faint); line-height:1.5; margin-top:8px; }
+.ov-sem-card .ov-ritual b { color:var(--ink); }
+.ov-role-compact .role-bar { padding:8px 12px; font-size:12px; }
+.ov-role-compact .role-bar .role-name { width:72px; font-size:12px; }
+.ov-role-compact .role-bar .role-count { width:36px; font-size:11px; }
+
+/* ── Sliding Comparison Deck ─────────────────────────────────────── */
+.deck-shell { display:grid; grid-template-columns:260px minmax(0,1fr); gap:28px; margin-top:36px; min-height:620px; }
+
+.deck-control { padding:20px; border:1px solid var(--line); border-radius:22px;
+  background:rgba(7,4,3,.38); backdrop-filter:blur(12px); align-self:start; position:sticky; top:100px; }
+.deck-control small { font-family:var(--mono); font-size:9px; letter-spacing:.12em; color:var(--gold-hot); text-transform:uppercase; display:block; margin-bottom:4px; }
+.deck-control h3 { margin:0 0 6px; font-size:20px; letter-spacing:-.03em; }
+.deck-control > p { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 18px; }
+
+.deck-tabs { display:grid; gap:6px; margin-bottom:18px; }
+.deck-tab { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid var(--line); border-radius:14px;
+  background:transparent; color:var(--muted); cursor:pointer; transition:all .22s ease; text-align:left; font-family:var(--sans); }
+.deck-tab:hover { border-color:var(--line-strong); color:var(--ink); }
+.deck-tab.is-active { border-color:var(--gold-hot); background:rgba(255,228,163,.06); color:var(--ink); }
+.deck-tab .dt-num { font-family:var(--mono); font-size:9px; letter-spacing:.08em; color:var(--gold-hot); min-width:20px; }
+.deck-tab .dt-label { font-size:13px; font-weight:600; letter-spacing:-.02em; display:block; }
+.deck-tab .dt-hint { display:block; font-size:10px; color:var(--faint); font-family:var(--mono); letter-spacing:.04em; }
+
+.deck-stats { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; padding:10px 0; border-top:1px solid var(--line); }
+.deck-stats span { font-size:10px; color:var(--faint); font-family:var(--mono); letter-spacing:.06em; }
+.deck-stats strong { display:block; font-size:18px; color:var(--ink); font-family:var(--serif); }
+
+.deck-arrows { display:flex; gap:6px; }
+.deck-arrow { flex:1; padding:8px; border:1px solid var(--line); border-radius:10px; background:transparent;
+  color:var(--faint); font-size:16px; cursor:pointer; transition:.2s; }
+.deck-arrow:hover { border-color:var(--ink); color:var(--ink); background:rgba(255,255,255,.04); }
+
+.deck-stage { overflow:hidden; position:relative; border:1px solid var(--line); border-radius:24px;
+  background:rgba(255,240,210,.015); }
+.deck-track { display:flex; transition:transform .42s cubic-bezier(.22,.61,.36,1); will-change:transform;
+  min-height:600px; }
+.deck-card { min-width:100%; padding:12px 8px; display:grid; align-content:start; gap:28px; }
+
+.deck-dots { display:flex; justify-content:center; gap:10px; margin-top:18px; }
+.deck-dot { width:10px; height:10px; border-radius:50%; border:1px solid var(--line);
+  background:transparent; cursor:pointer; transition:.2s; padding:0; }
+.deck-dot.is-active { background:var(--gold-hot); border-color:var(--gold-hot); }
+.deck-dot:hover { border-color:var(--ink); }
+
+/* ── Deck card content styles (scroll-independent) ───────────────── */
+.eco-bars-wrap { display:grid; gap:10px; }
+.eco-bar-row { display:flex; align-items:center; gap:12px; padding:12px 18px; border:1px solid var(--line);
+  border-radius:16px; background:rgba(255,240,210,.025); }
+.eco-bar-label { width:80px; flex-shrink:0; font-size:14px; font-weight:600; letter-spacing:-.02em; text-align:right; }
+.eco-bar-label small { display:block; font-family:var(--mono); font-size:8px; letter-spacing:.06em; color:var(--faint); font-weight:400; }
+.eco-bar-track { flex:1; height:36px; border-radius:18px; background:rgba(255,240,210,.06); overflow:hidden; display:flex; min-width:200px; }
+.eco-bar-seg { height:100%; display:flex; align-items:center; justify-content:center; transition:filter .2s; position:relative; }
+.eco-bar-seg:hover { filter:brightness(1.2); z-index:2; }
+.eco-bar-seg span { font-size:10px; font-weight:700; letter-spacing:-.01em; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+
+.eco-summary-row { display:flex; gap:12px; align-items:center; padding:10px 18px;
+  border:1px solid var(--line); border-radius:12px; background:rgba(0,0,0,.14); flex-wrap:wrap; }
+.eco-summary-row span { font-family:var(--mono); font-size:9px; letter-spacing:.06em; color:var(--faint); }
+.eco-summary-row .es-role { display:flex; align-items:center; gap:5px; }
+.eco-summary-row .es-dot { width:10px; height:10px; border-radius:50%; }
+.eco-summary-row .es-val { font-weight:700; font-size:12px; color:var(--ink); }
+
+.eco-insight-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.eco-findings-3col { display:contents; }
+.eco-findings-3col .finding-card, .finding-card { padding:16px; border:1px solid var(--line); border-radius:18px;
+  background:rgba(0,0,0,.18); border-left:3px solid var(--fc); }
+.finding-card strong { display:block; margin-bottom:6px; font-size:14px; letter-spacing:-.02em; color:var(--fc); }
+.finding-card p { margin:0; color:var(--muted); font-size:12px; line-height:1.65; }
+
+.ritual-compare { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; }
+.ritual-col { padding:12px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,0,.14); text-align:center; }
+.ritual-col .rc-label { font-family:var(--mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin-bottom:8px; }
+.ritual-col .rc-bar { height:18px; border-radius:999px; background:rgba(255,240,210,.06); overflow:hidden; margin-bottom:3px; }
+.ritual-col .rc-fill { height:100%; border-radius:999px; }
+
+.align-summary-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.align-card { padding:20px; border:1px solid var(--line); border-radius:22px;
+  background:radial-gradient(circle at 50% 0%,rgba(var(--cr),.12),transparent 34%),rgba(255,240,210,.03); }
+.align-card h4 { margin:0 0 4px; font-size:18px; letter-spacing:-.03em; }
+.align-card .ac-sub { font-family:var(--mono); font-size:8px; letter-spacing:.08em; color:var(--faint); margin-bottom:14px; display:block; }
+.align-card .ac-match { padding:10px 14px; border-radius:14px; background:rgba(0,0,0,.2); margin-bottom:10px; }
+.align-card .ac-match strong { display:block; font-size:13px; letter-spacing:-.01em; margin-bottom:2px; }
+.align-card .ac-match .ac-score { font-family:var(--mono); font-size:10px; }
+.align-card .ac-samples { font-size:10px; color:var(--faint); line-height:1.6; margin-top:6px; }
+.align-card .ac-samples b { color:var(--ink); }
+
+.align-radar-section { }
+.align-radar-header { margin-bottom:16px; }
+.align-radar-header small { font-family:var(--mono); font-size:9px; letter-spacing:.08em; color:var(--faint); display:block; margin-bottom:4px; }
+.align-radar-header h3 { margin:0; font-size:16px; font-weight:600; color:var(--ink); letter-spacing:-.02em; }
+
+.align-deviation-bars { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.dev-bar-card { padding:16px; border:1px solid var(--line); border-radius:18px; background:rgba(0,0,0,.14); }
+.dev-bar-card h5 { margin:0 0 14px; font-size:13px; letter-spacing:-.01em; }
+.dev-bar-item { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.dev-bar-item .db-label { width:52px; font-family:var(--mono); font-size:8px; letter-spacing:.05em; color:var(--faint); text-align:right; flex-shrink:0; }
+.dev-bar-item .db-track { flex:1; height:12px; border-radius:6px; background:rgba(255,240,210,.06); position:relative; overflow:visible; }
+.dev-bar-item .db-fill { height:100%; border-radius:6px; position:absolute; min-width:2px; }
+.dev-bar-item .db-fill.neg { right:50%; background:var(--red-hot); opacity:.7; }
+.dev-bar-item .db-fill.pos { left:50%; background:var(--cyan); opacity:.75; }
+.dev-bar-item .db-zero { position:absolute; left:50%; top:-2px; width:1px; height:16px; background:rgba(255,240,210,.25); }
+.dev-bar-item .db-val { width:36px; font-family:var(--mono); font-size:9px; text-align:left; flex-shrink:0; color:var(--faint); }
+
+.deepdive-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,380px); gap:24px; align-items:start; }
+.deepdive-scatter-col { border:1px solid var(--line); border-radius:24px; padding:18px; background:rgba(255,240,210,.02); }
+.deepdive-scatter-col small { font-family:var(--mono); font-size:9px; letter-spacing:.08em; color:var(--faint); display:block; margin-bottom:2px; }
+.deepdive-scatter-col h3 { margin:0 0 8px; font-size:16px; letter-spacing:-.02em; }
+
+.quad-scatter { width:100%; height:auto; display:block; }
+.quad-scatter .qs-bg { fill:rgba(255,240,210,.02); stroke:var(--line); }
+.quad-scatter .qs-line { stroke:var(--line); stroke-width:1; stroke-dasharray:4 4; }
+.quad-scatter .qs-dot { transition:r .2s; cursor:pointer; }
+.quad-scatter .qs-dot:hover { r:9; stroke:#fff; stroke-width:2; }
+.quad-scatter .qs-label { font-family:var(--sans); font-size:9px; fill:var(--faint); }
+.quad-scatter .qs-quad-label { font-family:var(--serif); font-size:11px; fill:var(--faint); opacity:.5; }
+
+.quad-legend { display:flex; gap:12px; margin-top:10px; flex-wrap:wrap; }
+.quad-legend .ql-item { display:flex; align-items:center; gap:5px; font-size:9px; color:var(--muted); font-family:var(--mono); letter-spacing:.04em; }
+.quad-legend .ql-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+.deepdive-extremity-col { }
+.deepdive-extremity-col small { font-family:var(--mono); font-size:9px; letter-spacing:.08em; color:var(--faint); display:block; margin-bottom:2px; }
+.deepdive-extremity-col h3 { margin:0 0 12px; font-size:16px; letter-spacing:-.02em; }
+
+.ext-bars { display:grid; gap:6px; margin-bottom:12px; }
+.ext-bars > small { margin-bottom:6px; display:block; font-family:var(--mono); font-size:8px; letter-spacing:.08em; color:var(--faint); text-transform:uppercase; }
+.ext-row { padding:8px 12px; border:1px solid var(--line); border-radius:12px; background:rgba(0,0,0,.14); }
+.ext-row .er-head { display:flex; justify-content:space-between; margin-bottom:4px; }
+.ext-row .er-name { font-size:11px; letter-spacing:-.01em; }
+.ext-row .er-val { font-family:var(--mono); font-size:10px; color:var(--gold-hot); }
+.ext-row .er-track { height:12px; border-radius:999px; background:rgba(255,240,210,.06); overflow:hidden; }
+
+.ext-insight { margin-top:14px; padding:12px 14px; border-left:2px solid var(--gold-hot); border-radius:0 12px 12px 0; background:rgba(255,240,210,.03); }
+.ext-insight p { margin:0 0 8px; font-size:11px; color:var(--muted); line-height:1.6; }
+.ext-insight p:last-child { margin-bottom:0; }
+.ext-insight b { color:var(--gold-hot); }
+</style>
+</head>
+<body>
+
+<div class="progress"></div>
+<div class="cursor-light"></div>
+<div class="floating-tag tag-left">Nuo Mask · Global Context</div>
+<div class="floating-tag tag-right">483 CN · 80 World</div>
+<div class="scroll-cue">Scroll to explore</div>
+
+<nav class="nav">
+  <span class="brand">
+    <span class="brand-mark"></span>
+    傩面万象 · 全球对比
+  </span>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#compare">Compare</a>
+  </div>
+</nav>
+
+<div class="hero-stage" id="heroStage">
+  <div class="hero" id="hero">
+    <div class="hero-bg-word">MASK<br>ATLAS</div>
+    <div class="hero-orbit"></div>
+    <div class="hero-title-wrap">
+      <p class="hero-kicker">Cross-Culture Analysis / 2026-05</p>
+      <h1 class="hero-title">80张国外面具<br>跨文化分析档案</h1>
+      <p class="hero-sub">基于中国傩面具483件样本的分析框架，建立日本、韩国、巴厘岛、斯里兰卡四个文化圈的面具信息可视化系统，支撑后续跨文化比较与设计研究。</p>
+      <div class="hero-stats-row">
+        <div class="hero-stat"><strong>80</strong><span>Global masks</span></div>
+        <div class="hero-stat"><strong>4</strong><span>Cultures</span></div>
+        <div class="hero-stat"><strong>6</strong><span>Role types</span></div>
+        <div class="hero-stat"><strong>7</strong><span>Semantic dims</span></div>
+        <div class="hero-stat"><strong>11</strong><span>Score dims</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- SECTION 1+2: Overview + Culture Distribution (merged) -->
+<section class="section" id="overview" data-watch="overview">
+  <div class="section-inner">
+    <p class="kicker">01 / Overview & Culture Distribution</p>
+    <h2 class="section-title"><span class="gradient-text">四文化圈，八十张面具，一个分析框架。</span></h2>
+    <p class="section-desc">沿用国内傩面具483件的分析体系——6角色类型、7维语义空间、8项视觉特征标记、11项怪诞/威慑子维度评分——对四个文化圈80张面具进行系统性标注与分析。</p>
+    <div class="feature-grid">
+      <div class="feature"><small>01</small><strong>韩国 Talchum</strong><span>假面戏面具，涵盖两班讽刺、醉发伊喜剧、Bibi精灵、河回传统，世俗人物为主。</span></div>
+      <div class="feature"><small>02</small><strong>日本 Noh</strong><span>能乐面具，从小面、中将等优雅女/男面，到般若、大飞出等鬼面，道释神仙+驱疫神祇双重谱系。</span></div>
+      <div class="feature"><small>03</small><strong>巴厘岛 Barong/Topeng</strong><span>巴龙-面具舞体系，守护神巴龙与恶魔Rangda的永恒对抗，融入印度史诗与民间信仰。</span></div>
+      <div class="feature"><small>04</small><strong>斯里兰卡 Sanni/Kolam</strong><span>驱病/戏剧面具，Sanni病魔体系与Kolam传统交织，以面具作为治疗仪式的核心媒介。</span></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="overview-2col">
+      <div class="overview-left">
+        <small class="ov-eyebrow">角色生态 · 语义侧重</small>
+        <h3 class="ov-subtitle">每个文化圈的面具，都在回答不同的问题。</h3>
+        <p class="ov-intro">韩国假面戏追问"谁在说谎"，日本能面探索"何为美"，巴厘岛面具演绎"善如何战胜恶"，斯里兰卡Sanni回答"病从何来"。</p>
+        <div class="overview-role-compact" id="overviewRoleCompact"></div>
+      </div>
+      <div class="overview-right" id="overviewRight"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SCREEN 07: Cross-Culture Comparison — SLIDING DECK -->
+<section class="section" id="compare" data-watch="compare">
+  <div class="section-inner">
+    <p class="kicker">07 / Cross-Culture Comparison</p>
+    <h2 class="section-title"><span class="gradient-text">三重视角，一张对比网络。</span></h2>
+    <p class="section-desc">从生态位分布、形态对标到功能深挖，三个维度在同一空间内横向切换，构建完整的中外对比认知链条。</p>
+
+    <div class="deck-shell">
+      <!-- Left control panel -->
+      <aside class="deck-control">
+        <small>Comparison Deck</small>
+        <h3 id="deckHeadline">中外对比剖面</h3>
+        <p id="deckIntro">三张分析卡片，三个切入角度。点击标签或拖拽滑动切换。</p>
+        <div class="deck-tabs" id="deckTabs">
+          <button class="deck-tab is-active" data-slide="0">
+            <span class="dt-num">01</span>
+            <span class="dt-label">生态位全景</span>
+            <span class="dt-hint">角色分布 + 仪式功能</span>
+          </button>
+          <button class="deck-tab" data-slide="1">
+            <span class="dt-num">02</span>
+            <span class="dt-label">形态对标</span>
+            <span class="dt-hint">角色匹配 + 部位偏差</span>
+          </button>
+          <button class="deck-tab" data-slide="2">
+            <span class="dt-num">03</span>
+            <span class="dt-label">功能深挖</span>
+            <span class="dt-hint">四象限 + 极端程度</span>
+          </button>
+        </div>
+        <div class="deck-stats" id="deckStats">
+          <span><strong>80</strong> 国外样本</span>
+          <span><strong>4</strong> 文化圈</span>
+          <span><strong>6</strong> 角色类型</span>
+        </div>
+        <div class="deck-arrows">
+          <button class="deck-arrow" id="deckPrev" aria-label="上一张">←</button>
+          <button class="deck-arrow" id="deckNext" aria-label="下一张">→</button>
+        </div>
+      </aside>
+
+      <!-- Right sliding track -->
+      <div class="deck-stage">
+        <div class="deck-track" id="deckTrack">
+          <!-- Card A: Ecosystem -->
+          <div class="deck-card" id="deckCardA">
+            <div class="eco-bars-wrap" id="ecoBarsWrap"></div>
+            <div class="eco-insight-row">
+              <div class="eco-findings-3col" id="ecoFindings3"></div>
+            </div>
+            <div class="ritual-compare" id="ritualCompare"></div>
+          </div>
+          <!-- Card B: Alignment -->
+          <div class="deck-card" id="deckCardB">
+            <div class="align-summary-grid" id="alignSummaryGrid"></div>
+            <div class="align-radar-section">
+              <div class="align-radar-header">
+                <small>Face Region Deviation from Chinese Baseline</small>
+                <h3>各文化圈面部区域偏差（中国基线=0）</h3>
+              </div>
+              <div class="align-deviation-bars" id="alignDeviationBars"></div>
+            </div>
+          </div>
+          <!-- Card C: Deep Dive -->
+          <div class="deck-card" id="deckCardC">
+            <div class="deepdive-layout">
+              <div class="deepdive-scatter-col">
+                <small>Functional Equivalence Quadrant</small>
+                <h3>形态相似度 x 功能等价度</h3>
+                <svg class="quad-scatter" id="quadScatter" viewBox="0 0 620 480" role="img"></svg>
+                <div class="quad-legend" id="quadLegend"></div>
+              </div>
+              <div class="deepdive-extremity-col">
+                <small>Extremity Distribution</small>
+                <h3>怪诞指数 & 威慑指数</h3>
+                <div class="ext-bars" id="extGrotesque"></div>
+                <div class="ext-bars" id="extDeterrence"></div>
+                <div class="ext-insight" id="extInsight"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Dot indicators -->
+        <div class="deck-dots" id="deckDots">
+          <button class="deck-dot is-active" data-slide="0"></button>
+          <button class="deck-dot" data-slide="1"></button>
+          <button class="deck-dot" data-slide="2"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section final" id="final">
+  <div class="final-card">
+    <p class="kicker">Continue Building</p>
+    <h2><span class="gradient-text">从80张出发，建立全球面具信息图谱。</span></h2>
+    <p>当前已覆盖韩国、日本、巴厘岛、斯里兰卡四个文化圈。后续可扩展非洲、希腊、印第安、东南亚其他地区，进一步完善跨文化面具比较研究的数据基础与分析框架。</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+// ── Embedded analysis data ──────────────────────────────────────────────
+const DATA = {"total":80,"cultures":[{"name":"韩国","nameEn":"Korea","tradition":"Talchum","count":20,"color":"#cd5360","cr":"205,83,96"},{"name":"日本","nameEn":"Japan","tradition":"Noh","count":20,"color":"#28666e","cr":"40,102,110"},{"name":"印尼·巴厘岛","nameEn":"Indonesia-Bali","tradition":"Barong/Rangda/Topeng","count":20,"color":"#eec550","cr":"238,197,80"},{"name":"斯里兰卡","nameEn":"Sri Lanka","tradition":"Sanni/Kolam","count":20,"color":"#7c9885","cr":"124,152,133"}],"roleDistribution":[{"role":"世俗人物","count":23},{"role":"传奇英雄","count":17},{"role":"驱疫神祇","count":15},{"role":"精怪动物","count":13},{"role":"道释神仙","count":11},{"role":"民间俗神","count":1}],"quadrantDistribution":[{"type":"戏谑异化型","count":28,"avgG":20.1,"avgD":13.2},{"type":"人相亲和型","count":28,"avgG":15.2,"avgD":10.8},{"type":"驱邪震慑型","count":17,"avgG":22.4,"avgD":18.5},{"type":"神圣威严型","count":7,"avgG":14.6,"avgD":15.1}],"statistics":{"avgGrotesque":18.1,"avgDeterrence":14.2,"grotesqueHigh":34,"deterrenceHigh":42}};
+
+const ROLE_COLORS = {
+  "驱疫神祇":"#b3261e","民间俗神":"#b18a45","道释神仙":"#e8ddc8",
+  "传奇英雄":"#3a7ca5","精怪动物":"#7d4f93","世俗人物":"#a9a9a9"
+};
+const CULTURE_COLORS = {"韩国":"#cd5360","日本":"#28666e","印尼·巴厘岛":"#eec550","斯里兰卡":"#7c9885"};
+
+
+// ── Render role bars ───────────────────────────────────────────────────
+const roleByCulture = {
+  "韩国":{"世俗人物":15,"精怪动物":3,"民间俗神":1,"道释神仙":1},
+  "日本":{"道释神仙":11,"驱疫神祇":2,"世俗人物":1,"精怪动物":1},
+  "印尼·巴厘岛":{"传奇英雄":11,"驱疫神祇":4,"精怪动物":3,"世俗人物":2},
+  "斯里兰卡":{"驱疫神祇":9,"精怪动物":6,"世俗人物":3,"传奇英雄":1,"道释神仙":0},
+};
+const allRoles = ["驱疫神祇","民间俗神","道释神仙","传奇英雄","精怪动物","世俗人物"];
+const cultures = ["韩国","日本","印尼·巴厘岛","斯里兰卡"];
+
+
+// ── Overview right column: 4 culture semantic mini-cards ────────────
+var ovRight = document.getElementById('overviewRight');
+if(ovRight){
+  var semTop3 = {
+    '韩国':[{d:'娱神娱人',v:76},{d:'身份转换',v:62},{d:'祭祖',v:52}],
+    '日本':[{d:'身份转换',v:86},{d:'祈福',v:62},{d:'祭祖',v:58}],
+    '印尼·巴厘岛':[{d:'驱邪',v:68},{d:'镇宅',v:62},{d:'娱神娱人',v:58}],
+    '斯里兰卡':[{d:'逐疫',v:82},{d:'驱邪',v:78},{d:'镇宅',v:52}],
+  };
+  var ovRitual = {
+    '韩国':'讽刺批判 <b>50%</b> · 戏剧表演 <b>40%</b>',
+    '日本':'戏剧表演 <b>55%</b> · 仪式开场 <b>30%</b>',
+    '印尼·巴厘岛':'戏剧表演 <b>45%</b> · 神话叙事 <b>25%</b>',
+    '斯里兰卡':'驱动病治疗 <b>60%</b> · 戏剧表演 <b>20%</b>',
+  };
+  var ovOneLine = {
+    '韩国':'假面戏追问"谁在说谎"——以面具为镜，讽刺身份与权力的虚伪。',
+    '日本':'能面追问"何为美"——将身份转换升华为极致的内敛美学。',
+    '印尼·巴厘岛':'巴龙追问"善如何战胜恶"——史诗与信仰在面具中反复演绎。',
+    '斯里兰卡':'Sanni追问"病从何来"——面具是诊断书，也是治疗工具。',
+  };
+  ovRight.innerHTML = cultures.map(function(cu){
+    var t3 = semTop3[cu];
+    var color = CULTURE_COLORS[cu]||'#888';
+    return '<div class="ov-sem-card">'+
+      '<h4 style="color:'+color+'">'+cu+'</h4>'+
+      '<div class="ov-sem-top">'+
+        t3.map(function(s){return '<div class="ov-sem-item"><span class="ovs-val" style="color:'+color+'">'+s.v+'</span><span class="ovs-label">'+s.d+'</span></div>';}).join('')+
+      '</div>'+
+      '<div class="ov-ritual">'+ovRitual[cu]+'</div>'+
+      '<div class="ov-ritual" style="margin-top:4px">'+ovOneLine[cu]+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── Overview left: compact role bars ────────────────────────────────
+var orc = document.getElementById('overviewRoleCompact');
+if(orc){
+  orc.innerHTML = allRoles.map(function(role){
+    var total = DATA.roleDistribution.find(function(r){return r.role===role})?.count||0;
+    return '<div class="role-bar">'+
+      '<span class="role-name">'+role+'</span>'+
+      '<div class="role-track">'+
+        cultures.map(function(c){
+          var cnt = roleByCulture[c]?.[role]||0;
+          return cnt ? '<span class="role-seg" style="flex:'+cnt+';background:'+CULTURE_COLORS[c]+';min-width:'+Math.max(cnt*3,8)+'px" title="'+c+': '+cnt+'"></span>' : '';
+        }).join('')+
+      '</div>'+
+      '<span class="role-count">'+total+'</span></div>';
+  }).join('');
+}
+
+// ── Screen A: Horizontal Stacked Bars + Findings ──────────────────
+(function renderEcosystem(){
+  try {
+  var cultures = ['韩国','日本','印尼·巴厘岛','斯里兰卡'];
+  var roles = ['驱疫神祇','民间俗神','道释神仙','传奇英雄','精怪动物','世俗人物'];
+  var matrix = {
+    '韩国':{'驱疫神祇':0,'民间俗神':1,'道释神仙':1,'传奇英雄':0,'精怪动物':3,'世俗人物':15},
+    '日本':{'驱疫神祇':2,'民间俗神':0,'道释神仙':11,'传奇英雄':0,'精怪动物':1,'世俗人物':1},
+    '印尼·巴厘岛':{'驱疫神祇':4,'民间俗神':0,'道释神仙':0,'传奇英雄':11,'精怪动物':3,'世俗人物':2},
+    '斯里兰卡':{'驱疫神祇':9,'民间俗神':0,'道释神仙':0,'传奇英雄':1,'精怪动物':6,'世俗人物':3},
+  };
+
+  // Horizontal stacked bars
+  var bw = document.getElementById('ecoBarsWrap');
+  if(bw){
+    var barsHtml = '';
+    cultures.forEach(function(c){
+      var entries = [];
+      roles.forEach(function(r){ if(matrix[c][r]) entries.push({role:r,count:matrix[c][r]}); });
+      var total = entries.reduce(function(s,e){return s+e.count},0);
+      barsHtml += '<div class="eco-bar-row">'+
+        '<span class="eco-bar-label">'+c+'<small>'+total+'件</small></span>'+
+        '<div class="eco-bar-track">';
+      entries.forEach(function(e){
+        var pct = e.count/total*100;
+        barsHtml += '<div class="eco-bar-seg" style="width:'+pct+'%;background:'+ROLE_COLORS[e.role]+'" title="'+e.role+': '+e.count+'件 ('+Math.round(pct)+'%)">'+
+          (pct>12?'<span>'+e.role.slice(0,2)+'</span>':'')+'</div>';
+      });
+      barsHtml += '</div></div>';
+    });
+
+    // Summary totals row
+    var totals = {};
+    roles.forEach(function(r){totals[r]=cultures.reduce(function(s,c){return s+matrix[c][r]},0);});
+    barsHtml += '<div class="eco-summary-row"><span>角色总计</span>';
+    roles.forEach(function(r){
+      if(totals[r]) barsHtml += '<span class="es-role"><span class="es-dot" style="background:'+ROLE_COLORS[r]+'"></span>'+r.slice(0,2)+' <span class="es-val">'+totals[r]+'</span></span>';
+    });
+    barsHtml += '</div>';
+    bw.innerHTML = barsHtml;
+  }
+
+  // 3-column findings
+  var ef = document.getElementById('ecoFindings3');
+  if(ef){
+    ef.innerHTML =
+      '<div class="finding-card" style="--fc:#ff6034"><strong>民间俗神：中国独有</strong><p>地方信仰型的面具角色在国外四个文化圈中几乎没有系统对应，是中国傩面具最独特的角色类型。</p></div>'+
+      '<div class="finding-card" style="--fc:#90dfe1"><strong>驱疫神祇：四国共有</strong><p>驱邪、镇护是跨文化最普遍的面具功能。斯里兰卡Sanni体系尤为发达（9/20=45%）。</p></div>'+
+      '<div class="finding-card" style="--fc:#eec550"><strong>巴厘岛最均衡 / 斯里兰卡最集中</strong><p>巴厘5/6角色均有分布，英雄+精怪+驱疫三足鼎立。斯里兰卡驱疫+精怪占75%，功能高度聚焦。</p></div>';
+  }
+
+  // Ritual function comparison
+  var rc = document.getElementById('ritualCompare');
+  if(rc){
+    var ritualKeys = ['驱动病治疗','戏剧表演','讽刺批判','仪式开场','神话叙事','驱邪镇护'];
+    var ritualColors = {'驱动病治疗':'#b3261e','戏剧表演':'#3a7ca5','讽刺批判':'#7d4f93','仪式开场':'#b18a45','神话叙事':'#eec550','驱邪镇护':'#28666e'};
+    var ritualData = [
+      {name:'中国(483)',vals:[18,26,8,24,0,24]},
+      {name:'韩国',vals:[0,40,50,5,0,5]},
+      {name:'日本',vals:[0,55,0,30,0,15]},
+      {name:'巴厘岛',vals:[5,45,5,10,25,10]},
+      {name:'斯里兰卡',vals:[60,20,0,5,0,15]},
+    ];
+    rc.innerHTML = ritualKeys.map(function(k,i){
+      var maxV = Math.max.apply(null, ritualData.map(function(d){return d.vals[i]||0}).concat([1]));
+      return '<div class="ritual-col"><div class="rc-label">'+k+'</div>'+
+        ritualData.map(function(d){
+          var v = d.vals[i]||0;
+          return '<div class="rc-bar" title="'+d.name+': '+v+'%"><div class="rc-fill" style="width:'+(v/maxV*100)+'%;background:'+ritualColors[k]+'"></div></div>';
+        }).join('')+'</div>';
+    }).join('');
+  }
+  }catch(e){console.error('renderEcosystem error:',e);}
+})();
+
+// ── Screen B: Simplified — Summary Cards + Deviation Bars ──────────
+(function renderAlignment(){
+  try {
+  var cultures = ['韩国','日本','印尼·巴厘岛','斯里兰卡'];
+
+  // Each culture's dominant role match + key samples
+  var cultureMatchData = {
+    '韩国': {role:'世俗人物',score:78,color:'#cd5360',cr:'205,83,96',
+      desc:'Talchum假面戏以讽刺社会阶层为核心，15/20件映射为世俗人物——两班贵族讽刺、醉发伊喜剧、老妇悲情等角色体系与中国傩面的乡官、丑角、土地形成功能对位。',
+      samples:'最佳匹配：<b>莲叶面具→世俗人物(89%)</b>、河回两班→世俗人物、长女面具→世俗人物'},
+    '日本': {role:'道释神仙',score:80,color:'#28666e',cr:'40,102,110',
+      desc:'能面体系以超然美学和身份转换为核心，11/20件映射为道释神仙——小面、中将等优雅面具将"美"本身作为仪式媒介，与中国傩面以"力"为媒介形成对照。',
+      samples:'最佳匹配：<b>小面→道释神仙(88%)</b>、翁系面具→道释神仙、中将→道释神仙'},
+    '印尼·巴厘岛': {role:'传奇英雄',score:76,color:'#eec550',cr:'238,197,80',
+      desc:'巴龙/面具舞传统融合印度史诗与本土信仰，11/20件映射为传奇英雄——罗摩、Laksmana等史诗角色面具与中国傩戏的关公、武将等英雄谱系形成叙事功能上的跨文化对话。',
+      samples:'最佳匹配：<b>罗摩面具→传奇英雄(94%)</b>、巴龙凯特→精怪动物、Rangda→驱疫神祇'},
+    '斯里兰卡': {role:'驱疫神祇',score:82,color:'#7c9885',cr:'124,152,133',
+      desc:'Sanni/Kolam体系以面具为治疗工具，9/20件映射为驱疫神祇——18种Sanni病魔各对应一种疾病，与中国傩面的"逐疫""驱邪"功能形成最直接的文化功能对等关系。',
+      samples:'最佳匹配：<b>Naga Sanniya→驱疫神祇(90%)</b>、Maha Sohona→驱疫神祇、Huniyam Yakka→驱疫神祇'},
+  };
+
+  // Render summary cards
+  var sg = document.getElementById('alignSummaryGrid');
+  if(sg){
+    sg.innerHTML = cultures.map(function(cu){
+      var d = cultureMatchData[cu];
+      return '<div class="align-card" style="--cr:'+d.cr+'">'+
+        '<h4>'+cu+'</h4>'+
+        '<span class="ac-sub">最接近中国角色类型</span>'+
+        '<div class="ac-match"><strong style="color:'+d.color+'">'+d.role+'</strong>'+
+        '<span class="ac-score">平均形态相似度 <b style="color:'+d.color+'">'+d.score+'%</b></span></div>'+
+        '<p style="color:var(--muted);font-size:11px;line-height:1.6;margin:0">'+d.desc+'</p>'+
+        '<div class="ac-samples">'+d.samples+'</div></div>';
+    }).join('');
+  }
+
+  // Region deviation bars
+  var devData = {
+    '韩国':{'额部/冠饰':-18,'眉眼':-28,'鼻部中轴':-22,'口部/牙齿':-32,'面颊纹样':-20,'边缘/附属':-26},
+    '日本':{'额部/冠饰':-6,'眉眼':-22,'鼻部中轴':-18,'口部/牙齿':-26,'面颊纹样':-16,'边缘/附属':-8},
+    '印尼·巴厘岛':{'额部/冠饰':8,'眉眼':-6,'鼻部中轴':-2,'口部/牙齿':2,'面颊纹样':4,'边缘/附属':12},
+    '斯里兰卡':{'额部/冠饰':-12,'眉眼':-8,'鼻部中轴':-14,'口部/牙齿':18,'面颊纹样':-10,'边缘/附属':2},
+  };
+  var regions = ['额部/冠饰','眉眼','鼻部中轴','口部/牙齿','面颊纹样','边缘/附属'];
+  var maxAbsDev = 35;
+
+  var db = document.getElementById('alignDeviationBars');
+  if(db){
+    db.innerHTML = cultures.map(function(cu){
+      var d = devData[cu];
+      var color = CULTURE_COLORS[cu]||'#888';
+      var bars = regions.map(function(reg){
+        var val = d[reg];
+        var isNeg = val < 0;
+        var absVal = Math.abs(val);
+        var pct = absVal/maxAbsDev*100;
+        var colorClass = isNeg ? 'neg' : 'pos';
+        return '<div class="dev-bar-item">'+
+          '<span class="db-label">'+reg+'</span>'+
+          '<div class="db-track"><div class="db-zero"></div>'+
+          '<div class="db-fill '+colorClass+'" style="width:'+(pct/2)+'%"></div></div>'+
+          '<span class="db-val" style="color:'+(isNeg?'var(--red-hot)':'var(--cyan)')+'">'+(val>0?'+':'')+val+'</span></div>';
+      }).join('');
+      return '<div class="dev-bar-card"><h5 style="color:'+color+'">'+cu+'</h5>'+bars+
+        '<p style="font-size:9px;color:var(--faint);margin:8px 0 0">红=低于中国 / 青=高于中国</p></div>';
+    }).join('');
+  }
+  }catch(e){console.error('renderAlignment error:',e);}
+})();
+
+// ── Screen C: Quadrant Scatter + Extremity Distribution ─────────────
+(function renderDeepDive(){
+  try {
+  var pairs = [
+    {cn:'钟馗',wn:'Rangda',wc:'印尼·巴厘岛',kw:'驱邪威慑',x:58,y:88},
+    {cn:'开山神',wn:'大飞出',wc:'日本',kw:'开场震慑',x:92,y:86},
+    {cn:'土地公',wn:'巴龙凯特',wc:'印尼·巴厘岛',kw:'守护祈福',x:62,y:68},
+    {cn:'丑角',wn:'Bondres',wc:'印尼·巴厘岛',kw:'喜剧表演',x:84,y:72},
+    {cn:'判官',wn:'小面',wc:'日本',kw:'身份美学',x:48,y:82},
+    {cn:'武将',wn:'罗摩',wc:'印尼·巴厘岛',kw:'英雄叙事',x:76,y:58},
+    {cn:'先锋小姐',wn:'Hahoe Bune',wc:'韩国',kw:'女性角色',x:82,y:24},
+    {cn:'雷公',wn:'Naga Raksha',wc:'斯里兰卡',kw:'兽形威慑',x:68,y:66},
+    {cn:'唐氏太婆',wn:'Shinhalabi',wc:'韩国',kw:'长者角色',x:74,y:42},
+    {cn:'孽龙',wn:'Maha Sohona',wc:'斯里兰卡',kw:'逐疫治疗',x:56,y:92},
+  ];
+
+  var svg = document.getElementById('quadScatter');
+  if(svg){
+    var W=620,H=520,px=60,py=30,pw=480,ph=430;
+    var svgInner = '<rect class="qs-bg" x="'+px+'" y="'+py+'" width="'+pw+'" height="'+ph+'" rx="12"/>';
+    svgInner += '<line class="qs-line" x1="'+px+'" y1="'+(py+ph/2)+'" x2="'+(px+pw)+'" y2="'+(py+ph/2)+'"/>';
+    svgInner += '<line class="qs-line" x1="'+(px+pw/2)+'" y1="'+py+'" x2="'+(px+pw/2)+'" y2="'+(py+ph)+'"/>';
+    svgInner += '<text class="qs-quad-label" x="'+(px+pw*0.25)+'" y="'+(py+30)+'">戏谑异化型</text>';
+    svgInner += '<text class="qs-quad-label" x="'+(px+pw*0.72)+'" y="'+(py+30)+'">驱邪震慑型</text>';
+    svgInner += '<text class="qs-quad-label" x="'+(px+pw*0.25)+'" y="'+(py+ph-12)+'">人相亲和型</text>';
+    svgInner += '<text class="qs-quad-label" x="'+(px+pw*0.72)+'" y="'+(py+ph-12)+'">神圣威严型</text>';
+
+    pairs.forEach(function(p){
+      var cx = px + p.x/100*pw;
+      var cy = py + (100-p.y)/100*ph;
+      var color = CULTURE_COLORS[p.wc]||'#888';
+      svgInner += '<circle class="qs-dot" cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="6" fill="'+color+'" stroke="rgba(255,255,255,.3)" stroke-width="1"><title>'+p.cn+' <-> '+p.wn+' ('+p.kw+') | form:'+p.x+'% sem:'+p.y+'%</title></circle>';
+      svgInner += '<text class="qs-label" x="'+cx.toFixed(1)+'" y="'+(cy-10).toFixed(1)+'" text-anchor="middle">'+p.cn.slice(0,2)+'</text>';
+    });
+
+    svgInner += '<text x="'+(px+pw/2)+'" y="'+(py+ph+28)+'" text-anchor="middle" fill="#fff" fill-opacity="0.36" font-size="10">形态相似度 -&gt;</text>';
+    svgInner += '<text x="'+(px-16)+'" y="'+(py+ph/2)+'" text-anchor="middle" fill="#fff" fill-opacity="0.36" font-size="10" transform="rotate(-90,'+(px-16)+','+(py+ph/2)+')">&lt;- 功能等价度</text>';
+    svg.innerHTML = svgInner;
+  }
+
+  var ql = document.getElementById('quadLegend');
+  if(ql){
+    ql.innerHTML = pairs.map(function(p){
+      return '<div class="ql-item"><span class="ql-dot" style="background:'+(CULTURE_COLORS[p.wc]||'#888')+'"></span>'+p.cn+'<->'+p.wn+' <span style="color:var(--faint)">'+p.kw+'</span></div>';
+    }).join('');
+  }
+
+  // Extremity bars
+  var extData = [
+    {name:'中国(483)',g:14.6,d:12.3,color:'#ff6034'},
+    {name:'韩国',g:13.8,d:9.2,color:'#cd5360'},
+    {name:'日本',g:16.2,d:11.8,color:'#28666e'},
+    {name:'巴厘岛',g:20.4,d:16.5,color:'#eec550'},
+    {name:'斯里兰卡',g:22.1,d:18.7,color:'#7c9885'},
+  ];
+  var maxG=30, maxD=25;
+
+  var eg = document.getElementById('extGrotesque');
+  if(eg){
+    eg.innerHTML = '<small style="margin-bottom:8px;display:block">怪诞指数 /30</small>'+
+      extData.map(function(e){
+        return '<div class="ext-row"><div class="er-head"><span class="er-name">'+e.name+'</span><span class="er-val">'+e.g+'</span></div><div class="er-track"><div style="width:'+(e.g/maxG*100)+'%;height:100%;background:'+e.color+';border-radius:999px;opacity:.85"></div></div></div>';
+      }).join('');
+  }
+
+  var ed = document.getElementById('extDeterrence');
+  if(ed){
+    ed.innerHTML = '<small style="margin-bottom:8px;display:block">威慑指数 /25</small>'+
+      extData.map(function(e){
+        return '<div class="ext-row"><div class="er-head"><span class="er-name">'+e.name+'</span><span class="er-val">'+e.d+'</span></div><div class="er-track"><div style="width:'+(e.d/maxD*100)+'%;height:100%;background:'+e.color+';border-radius:999px;opacity:.85"></div></div></div>';
+      }).join('');
+  }
+
+  var ei = document.getElementById('extInsight');
+  if(ei){
+    ei.innerHTML = '<p><b>巴厘岛和斯里兰卡</b>在怪诞+威慑双维度上显著高于中国均值，反映了东南亚面具传统更强调<b>视觉极端性</b>。</p><p><b>韩国</b>在两个维度上均低于中国，Talchum面具更多服务于<b>讽刺批判与喜剧娱乐</b>而非威慑。</p><p><b>日本</b>与中国最接近——能面的内敛美学与中国傩面的仪式威慑处于相似的<b>中间地带</b>。</p>';
+  }
+  }catch(e){console.error('renderDeepDive error:',e);}
+})();
+
+// ── Scroll-driven animation system ─────────────────────────────────────
+const root = document.documentElement;
+let targetX=0,targetY=0,smoothX=0,smoothY=0,scrollProgress=0,lastSX=999,lastSY=999,needsScrollUpdate=true;
+
+function clamp(n,min=0,max=1){return Math.min(max,Math.max(min,n));}
+function easeOutCubic(t){return 1-Math.pow(1-t,3);}
+
+window.addEventListener('pointermove',e=>{
+  targetX=(e.clientX/window.innerWidth-.5)*2;
+  targetY=(e.clientY/window.innerHeight-.5)*2;
+  root.style.setProperty('--mx',targetX.toFixed(4));
+  root.style.setProperty('--my',targetY.toFixed(4));
+},{passive:true});
+
+function updateScrollVars(){
+  const y=window.scrollY;
+  const maxScroll=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+  scrollProgress=clamp(y/maxScroll);
+  root.style.setProperty('--scroll',scrollProgress.toFixed(4));
+
+  document.querySelectorAll('[data-watch]').forEach(section=>{
+    const rect=section.getBoundingClientRect();
+    const p=clamp((window.innerHeight-rect.top)/(window.innerHeight+rect.height*.55));
+    root.style.setProperty('--'+section.dataset.watch,p.toFixed(4));
+  });
+}
+
+window.addEventListener('scroll',()=>{needsScrollUpdate=true;},{passive:true});
+window.addEventListener('resize',()=>{needsScrollUpdate=true;});
+updateScrollVars();
+
+function tick(){
+  smoothX+=(targetX-smoothX)*.075;
+  smoothY+=(targetY-smoothY)*.075;
+  if(Math.abs(smoothX-lastSX)>.001||Math.abs(smoothY-lastSY)>.001){
+    root.style.setProperty('--sx',smoothX.toFixed(4));
+    root.style.setProperty('--sy',smoothY.toFixed(4));
+    lastSX=smoothX;lastSY=smoothY;
+  }
+  if(needsScrollUpdate){updateScrollVars();needsScrollUpdate=false;}
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+(function initDeck(){
+  var track=document.getElementById("deckTrack");
+  if(!track)return;
+  var tabs=document.querySelectorAll(".deck-tab"),dots=document.querySelectorAll(".deck-dot");
+  var prevBtn=document.getElementById("deckPrev"),nextBtn=document.getElementById("deckNext");
+  var headline=document.getElementById("deckHeadline"),intro=document.getElementById("deckIntro");
+  var cur=0,total=3,startX=0,dragging=false,moved=false;
+  var labels=["生态位全景","形态对标","功能深挖"];
+  var intros=["角色生态分布与仪式功能对比","形态相似度匹配与面部区域偏差分析","功能等价四象限与极端程度分布"];
+
+  function go(idx){
+    cur=Math.max(0,Math.min(total-1,idx));
+    track.style.transform="translateX(-"+(cur*100)+"%)";
+    tabs.forEach(function(t,i){t.classList.toggle("is-active",i===cur);});
+    dots.forEach(function(d,i){d.classList.toggle("is-active",i===cur);});
+    if(headline)headline.textContent=labels[cur];
+    if(intro)intro.textContent=intros[cur];
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){go(parseInt(t.dataset.slide));});});
+  dots.forEach(function(d){d.addEventListener("click",function(){go(parseInt(d.dataset.slide));});});
+  if(prevBtn)prevBtn.addEventListener("click",function(){go(cur-1);});
+  if(nextBtn)nextBtn.addEventListener("click",function(){go(cur+1);});
+  track.addEventListener("pointerdown",function(e){startX=e.clientX;dragging=true;moved=false;track.style.transition="none";});
+  window.addEventListener("pointermove",function(e){if(!dragging)return;var dx=e.clientX-startX;if(Math.abs(dx)>5)moved=true;track.style.transform="translateX("+(-cur*100+dx/track.offsetWidth*100)+"%)";});
+  window.addEventListener("pointerup",function(e){if(!dragging)return;dragging=false;track.style.transition="transform .42s cubic-bezier(.22,.61,.36,1)";if(moved){var dx=e.clientX-startX;if(dx<-40)go(cur+1);else if(dx>40)go(cur-1);else go(cur);}});
+  document.addEventListener("keydown",function(e){if(e.key==="ArrowLeft")go(cur-1);if(e.key==="ArrowRight")go(cur+1);});
+  go(0);
+})();
+</script>
+</body>
+</html>
