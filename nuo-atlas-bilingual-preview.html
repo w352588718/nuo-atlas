@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>傩面万象｜Semantic Emotion Profile 16:9 Refined</title>
+  <title>傩面万象｜Nuo Atlas Bilingual Preview</title>
   <style>
     :root {
       --bg: #070403;
@@ -3617,208 +3617,170 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <link rel="stylesheet" href="nuo-stickman-mask-game/style.css">
   <link rel="stylesheet" href="global-compare-styles.css">
-  <style>
-    /* Preview-only: align sections 06-08 with the bilingual chapter heading system used by 01-03. */
-    #global-compare .section-meta,
-    #compare-section .section-meta,
-    #stickman-game .section-meta {
-      grid-template-columns: minmax(0, .95fr) minmax(300px, 430px) !important;
-      align-items: end !important;
-      gap: clamp(28px, 5vw, 72px);
-      margin-bottom: clamp(38px, 6vw, 72px);
-      opacity: 1 !important;
-      transform: none !important;
-      transition: none !important;
+  <style id="bilingual-title-system">
+    body.bilingual-page .section-title.bilingual-title,
+    body.bilingual-page .final-title.bilingual-title {
+      letter-spacing: 0;
     }
 
-    #global-compare .section-meta > div,
-    #compare-section .section-meta > div,
-    #stickman-game .section-meta > div {
-      display: contents !important;
-      min-width: 0;
+    body.bilingual-page .hero-title.bilingual-hero .hero-en {
+      width: max-content;
+      max-width: 100%;
+      margin-top: clamp(10px, 1.3vw, 18px);
+      font-family: var(--mono);
+      font-size: clamp(15px, 2.2vw, 34px);
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,228,163,.8);
+      -webkit-text-fill-color: currentColor;
+      background: none;
+      text-shadow: 0 16px 48px rgba(0,0,0,.52);
     }
 
-    #global-compare .kicker,
-    #compare-section .kicker,
-    #stickman-game .kicker,
-    #global-compare .section-title,
-    #compare-section .section-title,
-    #stickman-game .section-title {
-      grid-column: 1;
+    body.bilingual-page .hero-title.bilingual-hero .hero-note {
+      margin-top: 8px;
+      font-size: clamp(12px, 1.35vw, 19px);
+      letter-spacing: .18em;
+      color: rgba(144,223,225,.66);
     }
 
-    #global-compare .section-desc,
-    #compare-section .section-desc,
-    #stickman-game .section-desc {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      align-self: end;
-      max-width: 430px;
-      margin: 0 0 8px;
-    }
-
-    #global-compare .chapter-bilingual-title,
-    #compare-section .chapter-bilingual-title,
-    #stickman-game .chapter-bilingual-title {
-      max-width: 900px;
-      font-size: clamp(56px, 6.3vw, 104px);
-      letter-spacing: -.075em;
-    }
-
-    #global-compare .chapter-bilingual-title .gradient-text,
-    #compare-section .chapter-bilingual-title .gradient-text,
-    #stickman-game .chapter-bilingual-title .gradient-text,
-    #global-compare .chapter-bilingual-title .title-line,
-    #compare-section .chapter-bilingual-title .title-line,
-    #stickman-game .chapter-bilingual-title .title-line {
+    body.bilingual-page .bilingual-title .title-zh,
+    body.bilingual-page .bilingual-subtitle .subtitle-zh {
       display: block;
     }
 
-    #global-compare .chapter-bilingual-title .title-cn,
-    #compare-section .chapter-bilingual-title .title-cn,
-    #stickman-game .chapter-bilingual-title .title-cn {
-      white-space: nowrap;
+    body.bilingual-page .bilingual-title .title-en {
+      display: block;
+      width: min(760px, 100%);
+      margin-top: clamp(10px, 1.2vw, 18px);
+      font-family: var(--mono);
+      font-size: clamp(11px, 1vw, 16px);
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,228,163,.78);
+      text-shadow: 0 12px 34px rgba(0,0,0,.46);
     }
 
-    #global-compare .chapter-bilingual-title .title-en,
-    #compare-section .chapter-bilingual-title .title-en,
-    #stickman-game .chapter-bilingual-title .title-en {
-      font-size: .78em;
-      line-height: .9;
-      letter-spacing: -.055em;
+    body.bilingual-page .final-title.bilingual-title .title-en {
+      width: min(840px, 100%);
+      font-size: clamp(12px, 1.1vw, 17px);
+      color: rgba(144,223,225,.76);
     }
 
-    #stickman-game .chapter-bilingual-title .title-cn {
-      font-size: min(.8em, 8vw);
+    body.bilingual-page .bilingual-subtitle {
+      letter-spacing: 0;
     }
 
-    #global-compare .feature-grid,
-    #global-compare .section-divider,
-    #global-compare .overview-2col,
-    #compare-section .deck-shell {
-      grid-column: 1 / -1;
+    body.bilingual-page .bilingual-subtitle .subtitle-en {
+      display: block;
+      margin-top: .45em;
+      font-family: var(--mono);
+      font-size: max(10px, .48em);
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,228,163,.66);
     }
 
-    #global-compare .feature-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      align-items: stretch;
-      gap: 16px;
-      margin-top: clamp(48px, 6vw, 76px);
+    body.bilingual-page .period-card h3.bilingual-subtitle .subtitle-en {
+      font-size: 13px;
+      color: rgba(255,240,210,.62);
     }
 
-    #global-compare .feature {
-      display: grid;
-      align-content: space-between;
-      min-height: 246px;
-      padding: 24px;
-      background:
-        radial-gradient(circle at 18% 4%, rgba(255,96,52,.09), transparent 42%),
-        linear-gradient(180deg, rgba(255,240,210,.09), rgba(255,240,210,.035));
+    body.bilingual-page .feature strong.bilingual-subtitle .subtitle-en,
+    body.bilingual-page .ov-subtitle.bilingual-subtitle .subtitle-en {
+      font-size: 11px;
+      letter-spacing: .08em;
     }
 
-    #global-compare .feature small { margin-bottom: 34px; }
-    #global-compare .feature strong { min-height: 2.2em; }
+    body.bilingual-page .insight-chart-panel h3.bilingual-subtitle .subtitle-en,
+    body.bilingual-page .color-region-panel h3.bilingual-subtitle .subtitle-en,
+    body.bilingual-page .color-mask-panel h3.bilingual-subtitle .subtitle-en,
+    body.bilingual-page .deck-control h3.bilingual-subtitle .subtitle-en {
+      color: rgba(144,223,225,.7);
+    }
 
-    #global-compare .section-divider { margin-top: clamp(52px, 6vw, 78px); }
-    #global-compare .overview-2col {
-      grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
-      gap: clamp(24px, 4vw, 48px);
+    #global-compare .section-meta,
+    #compare-section .section-meta {
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
     }
 
-    #global-compare .overview-left,
-    #global-compare .overview-right,
-    #compare-section .deck-control,
-    #compare-section .deck-stage {
+    #global-compare .section-meta > div,
+    #compare-section .section-meta > div {
+      grid-column: 1 / -1;
       min-width: 0;
     }
 
-    #global-compare .overview-right { gap: 12px; }
-    #global-compare .ov-sem-card { min-height: 132px; }
-    #global-compare .role-bar { min-height: 48px; }
-
-    #compare-section .deck-shell {
-      grid-template-columns: minmax(250px, 280px) minmax(0, 1fr);
-      align-items: start;
-      gap: 30px;
-      margin-top: clamp(44px, 5vw, 68px);
-      min-height: 0;
+    #compare-section .section-inner,
+    #global-compare .section-inner {
+      width: min(1240px, 100%);
     }
 
-    #compare-section .deck-control {
-      top: 112px;
-      padding: 22px;
+    #global-compare .feature {
+      transform: none;
+      opacity: 1;
     }
 
-    #compare-section .deck-stage {
-      padding: 10px;
-      background:
-        radial-gradient(circle at 18% 0%, rgba(255,96,52,.045), transparent 38%),
-        rgba(255,240,210,.014);
-    }
-
-    #compare-section .deck-card { padding: 10px 0 12px; gap: 24px; }
-    #compare-section .eco-bars-wrap { gap: 12px; }
-    #compare-section .eco-bar-row { min-height: 72px; padding: 14px 18px; }
-    #compare-section .eco-insight-row { gap: 14px; }
-    #compare-section .finding-card { min-height: 138px; }
-    #compare-section .ritual-compare { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
-    #compare-section .align-summary-grid,
-    #compare-section .align-deviation-bars { gap: 16px; }
-
-    #global-compare .feature { transform: none; opacity: 1; }
-
-    #stickman-game #nuo-stickman-game {
-      box-shadow: 0 34px 110px rgba(0,0,0,.36);
-      border: 1px solid rgba(255,240,210,.12);
-    }
-
-    @media (max-width: 1080px) {
-      #global-compare .section-meta,
-      #compare-section .section-meta,
-      #stickman-game .section-meta {
-        grid-template-columns: minmax(0, 1fr) !important;
-      }
-
-      #global-compare .section-meta > div,
-      #compare-section .section-meta > div,
-      #stickman-game .section-meta > div {
-        display: block !important;
-      }
-
-      #global-compare .section-desc,
-      #compare-section .section-desc,
-      #stickman-game .section-desc {
-        grid-column: auto;
-        grid-row: auto;
-        max-width: 760px;
-        margin-top: 18px;
-      }
+    @media (max-width: 1180px) {
+      #global-compare .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .overview-2col { grid-template-columns: minmax(0, 1fr); }
+      .deck-shell { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+      .deck-control { position: relative; top: auto; }
+      .deck-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .align-summary-grid,
+      .align-deviation-bars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .deepdive-layout { grid-template-columns: minmax(0, 1fr); }
     }
 
     @media (max-width: 720px) {
-      #global-compare .chapter-bilingual-title,
-      #compare-section .chapter-bilingual-title,
-      #stickman-game .chapter-bilingual-title {
-        font-size: clamp(42px, 12vw, 72px);
-        letter-spacing: -.045em;
+      body.bilingual-page .bilingual-title .title-en {
+        width: 100%;
+        margin-top: 8px;
+        font-size: 10px;
+        letter-spacing: .12em;
       }
 
-      #global-compare .feature-grid,
-      #compare-section .deck-shell {
-        margin-top: 30px;
-      }
-
-      #global-compare .feature-grid,
-      #global-compare .overview-2col,
-      #compare-section .deck-shell,
-      #compare-section .ritual-compare {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      #global-compare .feature { min-height: auto; }
-      #global-compare .feature strong { min-height: 0; }
-      #compare-section .deck-stage { padding: 8px; }
+      #global-compare.section { padding-top: 72px; }
+      #global-compare .feature-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 34px; }
+      #global-compare .feature { min-height: auto; padding: 18px; border-radius: 22px; }
+      #global-compare .feature small { margin-bottom: 24px; }
+      .section-divider { margin: 34px 0 22px; }
+      .overview-2col { gap: 18px; }
+      .ov-sem-card .ov-sem-top { grid-template-columns: minmax(0, 1fr); }
+      .role-bar,
+      .ov-role-compact .role-bar { gap: 10px; padding: 10px 12px; }
+      .role-bar .role-name,
+      .ov-role-compact .role-bar .role-name { width: 68px; }
+      .deck-shell { display: block; margin-top: 28px; }
+      .deck-control { margin-bottom: 16px; padding: 18px; border-radius: 20px; }
+      .deck-tabs { grid-template-columns: minmax(0, 1fr); }
+      .deck-tab { min-height: 64px; }
+      .deck-tab .dt-label,
+      .deck-tab .dt-hint { min-width: 0; overflow-wrap: anywhere; }
+      .deck-stage { width: 100%; border-radius: 20px; overflow: hidden; }
+      .deck-track { min-height: 0; }
+      .deck-card { padding: 14px; gap: 16px; }
+      .eco-bar-row { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 8px; padding: 12px; }
+      .eco-bar-label { width: auto; text-align: left; }
+      .eco-bar-track { width: 100%; min-width: 0; height: 32px; }
+      .eco-insight-row,
+      .ritual-compare,
+      .align-summary-grid,
+      .align-deviation-bars,
+      .deepdive-layout { grid-template-columns: minmax(0, 1fr); }
+      .finding-card,
+      .align-card,
+      .dev-bar-card,
+      .deepdive-scatter-col { border-radius: 18px; }
+      .dev-bar-item { display: grid; grid-template-columns: 54px minmax(0, 1fr) 36px; align-items: center; }
+      .quad-scatter { min-height: 300px; }
+      .quad-legend { gap: 8px; }
     }
   </style>
 </head>
@@ -3989,7 +3951,7 @@
             <p class="kicker">03 / Real sample system</p>
             <h2 class="section-title"><span class="gradient-text">傩面具星图 / Mask Atlas</span></h2>
           </div>
-          <p class="section-desc">保留地域、角色、语义三种布局和筛选体系，同时把视觉统一到当前页面的火红、金色与青色设计语言。</p>
+          <p class="section-desc">这里嵌入你旧版星图的 483 件真实傩面具样本。保留地域、角色、语义三种布局和筛选体系，同时把视觉统一到当前页面的火红、金色与青色设计语言。</p>
         </div>
 
         <div class="atlas-archive" aria-label="傩面具真实样本星图">
@@ -4215,7 +4177,7 @@
         <div class="section-meta">
           <div>
             <p class="kicker">06 / Global Mask Samples</p>
-            <h2 class="section-title chapter-bilingual-title"><span class="gradient-text"><span class="title-line title-cn">世界面具样本 /</span><span class="title-line title-en">Global Mask Samples</span></span></h2>
+            <h2 class="section-title"><span class="gradient-text">世界面具样本</span></h2>
             <p class="section-desc">这一章暂时离开中国傩面具，把视线转向韩国假面戏、日本能面、巴厘岛面具舞与斯里兰卡Sanni/Kolam。四个文化圈共80张面具，分别呈现讽刺、幽玄、神魔对抗与驱病治愈等不同仪式语境。</p>
             <div class="feature-grid">
               <div class="feature"><small>01</small><strong>韩国假面戏：世俗讽刺</strong><span>Talchum与河回传统把面具推向社会关系现场，两班贵族、老妇、喜剧人物构成强烈的世俗角色谱系。</span></div>
@@ -4243,7 +4205,7 @@
         <div class="section-meta">
           <div>
             <p class="kicker">07 / China-Foreign Comparison</p>
-            <h2 class="section-title chapter-bilingual-title"><span class="gradient-text"><span class="title-line title-cn">中外面具对比 /</span><span class="title-line title-en">China-Foreign Comparison</span></span></h2>
+            <h2 class="section-title"><span class="gradient-text">中外面具对比</span></h2>
             <p class="section-desc">这一章以国内483件傩面具为基线，把上一章中的国外样本放入同一套分析框架。比较的重点不再是单独介绍文化圈，而是看国外面具如何在角色、形态和仪式功能上与中国傩面具发生对应、偏移或断裂。</p>
             <div class="deck-shell">
               <aside class="deck-control">
@@ -4285,7 +4247,7 @@
         <div class="section-meta">
           <div>
             <p class="kicker">08 / Mask Collector Game</p>
-            <h2 class="section-title chapter-bilingual-title"><span class="gradient-text"><span class="title-line title-cn">傩面具收集游戏 /</span><span class="title-line title-en">Mask Collector Game</span></span></h2>
+            <h2 class="section-title"><span class="gradient-text">傩面具收集小游戏</span></h2>
             <p class="section-desc">在 3D 地图中探索中国各地傩文化，收集独特的傩面具。</p>
           </div>
         </div>
@@ -6949,6 +6911,140 @@
         height: 660,
         sound: false
       });
+    })();
+  </script>
+  <script id="bilingual-title-renderer">
+    (function () {
+      var sectionTitles = [
+        ['#timeline .section-title', '傩文化历史长河', 'Nuo Mask Timeline'],
+        ['#map .section-title', '傩面具地域分布', 'Cultural Map'],
+        ['#atlas .section-title', '傩面具星图', 'Mask Atlas'],
+        ['#visual-insight .section-title', '傩面具语义与情绪剖面', 'Semantic and Emotion Profile'],
+        ['#color-atlas .section-title', '傩面具色彩图谱', 'Color Atlas'],
+        ['#global-compare .section-title', '世界面具样本', 'Global Mask Samples'],
+        ['#compare-section .section-title', '中外面具对比', 'China-Foreign Mask Comparison'],
+        ['#stickman-game .section-title', '傩面具收集小游戏', 'Mask Collector Game'],
+        ['#galaxy .section-title', '作品星河', 'Works Galaxy'],
+        ['#final .final-title', '以时间、空间、语义、情绪、色彩与作品，重构傩面具体验。', 'Rebuilding the Nuo mask experience through time, place, meaning, emotion, color, and works.']
+      ];
+
+      var subtitleMap = {
+        '先秦': 'Pre-Qin',
+        '汉唐': 'Han and Tang',
+        '宋元': 'Song and Yuan',
+        '明清': 'Ming and Qing',
+        '近现代': 'Modern Period',
+        '核心地区': 'Core Regions',
+        '中国傩面具地域三维星图': '3D Regional Star Map of Chinese Nuo Masks',
+        '傩面具样本': 'Nuo Mask Sample',
+        '典型面具样本': 'Representative Mask Samples',
+        '读取语义与情绪剖面数据': 'Loading Semantic and Emotion Profile',
+        '语义主题分布': 'Semantic Theme Distribution',
+        '语义主题 × 视觉特征': 'Semantic Theme by Visual Feature',
+        '语义维度 × 面部部位': 'Semantic Dimension by Face Region',
+        '威慑性 × 怪诞激烈性': 'Deterrence by Grotesque Intensity',
+        '四象限类型结构': 'Four-Quadrant Typology',
+        '怪诞等级与高分样本': 'Grotesque Levels and High-Scoring Samples',
+        '读取色彩图谱': 'Loading Color Atlas',
+        '地域色系比较': 'Regional Palette Comparison',
+        '单图色条浏览': 'Single Image Palette Browser',
+        '韩国假面戏：世俗讽刺': 'Korean Mask Drama: Secular Satire',
+        '日本能面：幽玄转身': 'Japanese Noh Masks: Yugen Transformation',
+        '巴厘面具舞：神魔对峙': 'Balinese Mask Dance: Divine and Demonic Tension',
+        '斯里兰卡病魔面：驱病治愈': 'Sri Lankan Sanni Masks: Healing and Exorcism',
+        '这一章只介绍国外样本：它们各自为什么需要面具。': 'Foreign Samples: Why Each Culture Needs Masks',
+        '角色对照': 'Role Alignment',
+        '形态对照': 'Form Alignment',
+        '功能对照': 'Ritual Function Alignment',
+        '形态相似 × 仪式等价': 'Form Similarity by Ritual Equivalence',
+        '怪诞感与威慑力': 'Grotesque Presence and Deterrence',
+        '开山神将面具': 'Kaishan Guardian Mask'
+      };
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (ch) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+        });
+      }
+
+      function setBilingualTitle(el, zh, en) {
+        if (!el || (el.dataset.bilingualZh === zh && el.querySelector('.title-en'))) return;
+        el.dataset.bilingualZh = zh;
+        el.dataset.bilingualEn = en;
+        el.classList.add('bilingual-title');
+        el.innerHTML = '<span class="gradient-text title-zh">' + escapeHtml(zh) + '</span><span class="title-en">' + escapeHtml(en) + '</span>';
+      }
+
+      function setBilingualSubtitle(el, zh, en) {
+        if (!el || (el.dataset.bilingualZh === zh && el.querySelector('.subtitle-en'))) return;
+        el.dataset.bilingualZh = zh;
+        el.dataset.bilingualEn = en;
+        el.classList.add('bilingual-subtitle');
+        el.innerHTML = '<span class="subtitle-zh">' + escapeHtml(zh) + '</span><span class="subtitle-en">' + escapeHtml(en) + '</span>';
+      }
+
+      function normalizeText(el) {
+        var hasRenderedTitle = el.querySelector && (el.querySelector('.title-en') || el.querySelector('.subtitle-en'));
+        return (hasRenderedTitle ? el.dataset.bilingualZh : el.textContent || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function renderHero() {
+        var heroTitle = document.querySelector('#hero .hero-title');
+        if (!heroTitle || heroTitle.dataset.bilingualHero) return;
+        heroTitle.dataset.bilingualHero = 'true';
+        heroTitle.classList.add('bilingual-hero');
+        heroTitle.innerHTML = [
+          '<span class="line cn gradient-text">傩面万象</span>',
+          '<span class="line hero-en">Nuo Mask Atlas</span>',
+          '<span class="line hero-en hero-note">Ritual as data. Mask as map.</span>'
+        ].join('');
+      }
+
+      function renderStaticTitles() {
+        sectionTitles.forEach(function (item) {
+          document.querySelectorAll(item[0]).forEach(function (el) {
+            setBilingualTitle(el, item[1], item[2]);
+          });
+        });
+        document.querySelectorAll('.loader-title').forEach(function (el) {
+          setBilingualSubtitle(el, '傩面万象', 'Nuo Mask Atlas');
+        });
+      }
+
+      function renderMappedSubtitles() {
+        document.querySelectorAll('h3, .feature strong, .ov-subtitle').forEach(function (el) {
+          var zh = normalizeText(el);
+          var en = subtitleMap[zh];
+          if (en) setBilingualSubtitle(el, zh, en);
+        });
+      }
+
+      function renderAll() {
+        document.body.classList.add('bilingual-page');
+        renderHero();
+        renderStaticTitles();
+        renderMappedSubtitles();
+      }
+
+      function scheduleRender() {
+        window.requestAnimationFrame(renderAll);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', scheduleRender);
+      } else {
+        scheduleRender();
+      }
+
+      window.setTimeout(renderAll, 450);
+      window.setTimeout(renderAll, 1200);
+      window.setTimeout(renderAll, 2600);
+
+      var observer = new MutationObserver(function () {
+        window.clearTimeout(observer._timer);
+        observer._timer = window.setTimeout(renderAll, 80);
+      });
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     })();
   </script>
 </body>
